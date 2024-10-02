@@ -1,4 +1,6 @@
-import axios from 'axios';
+import { message } from 'antd';
+import axios, { formToJSON } from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
 
 class ActionProvider {
   constructor(createChatBotMessage, setStateFunc) {
@@ -25,64 +27,64 @@ class ActionProvider {
     );
     this.updateChatbotState(botMessage);
   }
-  handleDonHangHomQua () {
+  handleDonHangHomQua() {
     const botMessage = this.createChatBotMessage(
       'Chúng tôi hỗ trợ giao hàng toàn quốc với chi phí ưu đai từ 10000VND đến 30000VND'
     );
     this.updateChatbotState(botMessage);
   }
-  
+
   async handleCheckOrder() {
     const username = 'thangth7';
     const url = `http://127.0.0.1:8080/manager/order/api/getlist/user?name=${username}`;
 
     try {
-        const response = await axios.get(url);
+      const response = await axios.get(url);
 
-        if (response.data && response.data.code === 0 && response.data.body && response.data.body.length > 0) {
-            const orders = response.data.body;
+      if (response.data && response.data.code === 0 && response.data.body && response.data.body.length > 0) {
+        const orders = response.data.body;
 
-            const filteredOrders = orders.filter(order => {
-                const statusFilter = [11, 13, 17, 19, 21]; // Define the statuses you want to include
-                return statusFilter.includes(order.status);
-            });
+        const filteredOrders = orders.filter(order => {
+          const statusFilter = [11, 13, 17, 19, 21]; // Define the statuses you want to include
+          return statusFilter.includes(order.status);
+        });
 
-            if (filteredOrders.length > 0) {
-                const botMessages = filteredOrders.map(order => {
-                    const orderId = order.order_id;
+        if (filteredOrders.length > 0) {
+          const botMessages = filteredOrders.map(order => {
+            const orderId = order.order_id;
 
-                    // Map order status to a readable format
-                    const statusMapping = {
-                        11: "Đang chờ xác nhận",
-                        13: "Đang chờ thanh toán online",
-                        17: "Đang chuẩn bị đơn hàng",
-                        19: "Đang vận chuyển",
-                        21: "Đang giao hàng"
-                    };
-                    const status = statusMapping[order.status] || "Trạng thái không xác định";
+            // Map order status to a readable format
+            const statusMapping = {
+              11: "Đang chờ xác nhận",
+              13: "Đang chờ thanh toán online",
+              17: "Đang chuẩn bị đơn hàng",
+              19: "Đang vận chuyển",
+              21: "Đang giao hàng"
+            };
+            const status = statusMapping[order.status] || "Trạng thái không xác định";
 
-                    return this.createChatBotMessage(`Bạn có đơn hàng mã ${orderId}. ✅ Trạng thái: ${status}.`);
-                  });
+            return this.createChatBotMessage(`Bạn có đơn hàng mã ${orderId}. ✅ Trạng thái: ${status}.`);
+          });
 
-                // Update chatbot with each filtered order message
-                botMessages.forEach(botMessage => this.updateChatbotState(botMessage));
-            } else {
-                // No orders found with the specified statuses
-                const botMessage = this.createChatBotMessage('Không tìm thấy đơn hàng phù hợp với trạng thái.');
-                this.updateChatbotState(botMessage);
-            }
+          // Update chatbot with each filtered order message
+          botMessages.forEach(botMessage => this.updateChatbotState(botMessage));
         } else {
-            // No order information found
-            const botMessage = this.createChatBotMessage('Không tìm thấy đơn hàng của bạn.');
-            this.updateChatbotState(botMessage);
+          // No orders found with the specified statuses
+          const botMessage = this.createChatBotMessage('Không tìm thấy đơn hàng phù hợp với trạng thái.');
+          this.updateChatbotState(botMessage);
         }
-    } catch (error) {
-        // Handle errors during the API call
-        console.error('Error during API call:', error);
-        const botMessage = this.createChatBotMessage('Có lỗi xảy ra khi kiểm tra đơn hàng của bạn.');
+      } else {
+        // No order information found
+        const botMessage = this.createChatBotMessage('Không tìm thấy đơn hàng của bạn.');
         this.updateChatbotState(botMessage);
+      }
+    } catch (error) {
+      // Handle errors during the API call
+      console.error('Error during API call:', error);
+      const botMessage = this.createChatBotMessage('Có lỗi xảy ra khi kiểm tra đơn hàng của bạn.');
+      this.updateChatbotState(botMessage);
     }
-}
+  }
 
 
   async handleSearch(message) {
@@ -105,22 +107,40 @@ class ActionProvider {
           let botMessageText = '';
           switch (index) {
             case 1:
+              localStorage.setItem('statusBuyUseChatBot', 1)
               botMessageText = `Sách "${item.name_book}" có giá ${item.price} VND.`;
               break;
             case 2:
+              localStorage.setItem('statusBuyUseChatBot', 2)
               botMessageText = `Số lượng sách "${item.name_book}" là ${item.quality}.`;
               break;
             case 3:
+              localStorage.setItem('statusBuyUseChatBot', 3)
               botMessageText = `Tác giả: ${item.author}, Quốc tịch: ${item.nationality}, Ngày sinh: ${item.birth_date}.`;
               break;
             case 4:
-              botMessageText = `Đơn hàng cho sách "${item.name_book}", số lượng ${item.quantity}, sẽ được gửi tới địa chỉ: ${item.address}. Email liên hệ: ${item.email}, SĐT: ${item.phone_number}.`;
+              const orderDetails = {
+                name_book: item.name_book,
+                quantity: item.quantity,
+                address: item.address,
+                email: item.email,
+                phone_number: item.phone_number
+              };
+              localStorage.setItem('statusBuyUseChatBot', 4)
+              localStorage.setItem('listBookBuyWhenChatBot', JSON.stringify(orderDetails));
+              botMessageText = 'Bạn muốn thanh toán online hay offline?';
+              break;
+            case 41:
+              localStorage.setItem('statusBuyUseChatBot', 41)
+              botMessageText = 'Cuốn sách đã hết hàng';
               break;
             case 5:
+              localStorage.setItem('statusBuyUseChatBot', 5)
               const typeBooks = item.type_books.map((type) => type.name).join(', ');
               botMessageText = `Một số sách  bạn có thể tìm thấy: ${typeBooks}`;
               break;
             default:
+              localStorage.setItem('statusBuyUseChatBot', 9999)
               botMessageText = 'Không tìm thấy thông tin phù hợp.';
           }
 
@@ -142,6 +162,40 @@ class ActionProvider {
     }
   }
 
+  async handleOnlinePayment() {
+    message.success('Tôi sẽ điều hướng đến trang thanh toán ngay vui lòng chờ')
+    const orderData = localStorage.getItem('listBookBuyWhenChatBot');
+    const orderDetails = JSON.parse(orderData);
+    const addressId = localStorage.getItem('delivery_address' || 0);
+    let data = JSON.stringify({
+      "name_book": orderDetails.name_book,
+      "quantity": orderDetails.quantity,
+      "address": orderDetails.address,
+      "email": orderDetails.email,
+      "phone_number": orderDetails.phone_number,
+      "addres_id": addressId
+    });
+    try {
+      const response = await axios.post('http://127.0.0.1:8080/manager/payment/create/payment/bot', data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (response.data.code === 0) {
+        window.location.href = response.data.body.checkoutUrl;
+      } else {
+        message.error('Lỗi kết nối internet');
+      }
+    } catch (error) {
+      message.error('Lỗi kết nối internet');
+    }
+  }
+
+  handleOfflinePayment() {
+    const botMessage = this.createChatBotMessage('Thanh toán offline thành công.');
+    message.success('Thanh toán offline thành công.')
+    this.updateChatbotState(botMessage);
+  }
   giolamViec() {
     // Define the working hours message
     const workingHoursMessage = `Giờ làm việc của chúng tôi như sau:\n- Thứ Hai đến Thứ Sáu: 8:00 - 17:00\n- Thứ Bảy: 9:00 - 12:00\n- Chủ Nhật: Nghỉ`;

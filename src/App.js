@@ -9,7 +9,6 @@ function App() {
  
       {/* <CheckLogin/> */}
       <ChatBots/>
-     
     </div>
   );
 }
