@@ -17,6 +17,18 @@ class MessageParser {
             lowerCaseMessage.includes('giờ làm việc của cửa hàng')
         ){
             this.actionProvider.giolamViec()
+        }else if(
+            lowerCaseMessage.includes('có thanh toán online không')
+        ){
+            this.actionProvider.handleHelpPaymenty()
+        } else if(
+            lowerCaseMessage.includes('cửa hàng giao hàng toàn quốc không')
+        ){
+            this.actionProvider.handleGiaoHang()
+        } else if(
+            lowerCaseMessage.includes('đơn hàng hôm qua')
+        ){
+
         } else {
             this.actionProvider.handleSearch(message);  // Pass the original message
         }

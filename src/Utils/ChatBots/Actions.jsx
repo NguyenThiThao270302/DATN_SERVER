@@ -13,19 +13,35 @@ class ActionProvider {
     this.updateChatbotState(botMessage);
   }
 
+  handleHelpPaymenty() {
+    const botMessage = this.createChatBotMessage(
+      'Chúng tôi hỗ trợ thanh toán online nhiều loại ngân hàng MB, VIB, BIDV,... '
+    );
+    this.updateChatbotState(botMessage);
+  }
+  handleGiaoHang() {
+    const botMessage = this.createChatBotMessage(
+      'Chúng tôi hỗ trợ giao hàng toàn quốc với chi phí ưu đai từ 10000VND đến 30000VND'
+    );
+    this.updateChatbotState(botMessage);
+  }
+  handleDonHangHomQua () {
+    const botMessage = this.createChatBotMessage(
+      'Chúng tôi hỗ trợ giao hàng toàn quốc với chi phí ưu đai từ 10000VND đến 30000VND'
+    );
+    this.updateChatbotState(botMessage);
+  }
+  
   async handleCheckOrder() {
-    const username = 'thangth7'; // Replace with the actual username or retrieve dynamically
+    const username = 'thangth7';
     const url = `http://127.0.0.1:8080/manager/order/api/getlist/user?name=${username}`;
 
     try {
-        // Send a GET request using axios
         const response = await axios.get(url);
 
-        // Check the response from the API
         if (response.data && response.data.code === 0 && response.data.body && response.data.body.length > 0) {
             const orders = response.data.body;
 
-            // Filter orders based on the desired statuses
             const filteredOrders = orders.filter(order => {
                 const statusFilter = [11, 13, 17, 19, 21]; // Define the statuses you want to include
                 return statusFilter.includes(order.status);
