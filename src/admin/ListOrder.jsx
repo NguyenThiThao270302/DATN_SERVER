@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Typography, Spin, Alert, Button, Input, message, Modal, Select } from 'antd';
+import axios from 'axios';
 
 const { Title } = Typography;
 const { Search } = Input;
 const { Option } = Select;
 
 const optionsStatusForUpdateOrder = [
+    { label: 'đã thanh toán ', value: 15 },
     { label: 'Đang chuẩn bị đơn hàng', value: 17 },
     { label: 'Đang vận chuyển', value: 19 },
     { label: 'Đang giao hàng', value: 21 },
@@ -14,7 +16,9 @@ const optionsStatusForUpdateOrder = [
 ];
 
 // Dữ liệu giả lập
-const fakeData = [
+
+
+const initData = [
     {
         order_id: 1832495,
         user_name: "Nguyễn Văn A",
@@ -181,24 +185,37 @@ const ListOrder = () => {
     const [status, setStatus] = useState(null);
     const [orderStatuses, setOrderStatuses] = useState({});
 
+    const fetchOrders = async () => {
+        try {
+            const response = await axios.get('http://127.0.0.1:8080/manager/order/api/listorder/admin');
+            if (response.data.code === 0) {
+                const apiData = response.data.body.map(order => ({
+                    ...order,
+                    key: order.order_id,
+                    create_time: new Date(order.create_time).toISOString(),
+                    status: order.status
+                }));
+                const combinedData = [...apiData, ...initData];
+                setData(combinedData);
+                setFilteredData(combinedData);
+            } else {
+                throw new Error('Failed to fetch data from API');
+            }
+        } catch (err) {
+            console.error('Error fetching data:', err);
+            setError('Failed to fetch data. Using initial data only.');
+            setData(initData);
+            setFilteredData(initData);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
     useEffect(() => {
         fetchOrders();
     }, []);
 
-    // Thay thế phần gọi API bằng dữ liệu giả lập
-    const fetchOrders = async () => {
-        try {
-            // Giả lập thời gian tải dữ liệu
-            setTimeout(() => {
-                setData(fakeData);
-                setFilteredData(fakeData);
-                setLoading(false);
-            }, 1000); // Giả lập tải trong 1 giây
-        } catch (err) {
-            setError(err.message);
-            setLoading(false);
-        }
-    };
 
     const updateStatusOrderById = (orderId, status) => {
         Modal.confirm({
@@ -300,7 +317,7 @@ const ListOrder = () => {
             key: 'updateOrder',
             render: (text, record) => (
                 <>
-                    <Select 
+                    <Select
                         placeholder="Vui lòng chọn trạng thái đơn hàng"
                         value={orderStatuses[record.order_id] || undefined}
                         onChange={(value) => handleStatusChange(record.order_id, value)}
@@ -312,8 +329,8 @@ const ListOrder = () => {
                             </Option>
                         ))}
                     </Select>
-                    <Button 
-                        type="primary" 
+                    <Button
+                        type="primary"
                         onClick={() => updateStatusOrderById(record.order_id, orderStatuses[record.order_id])}
                         disabled={!orderStatuses[record.order_id]}
                     >
