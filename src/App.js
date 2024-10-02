@@ -9,8 +9,8 @@ function App() {
     <div>
  
       {/* <CheckLogin/> */}
-      {/* <ChatBots/> */}
-      <Dashboard/>
+      <ChatBots/>
+      {/* <Dashboard/> */}
     </div>
   );
 }

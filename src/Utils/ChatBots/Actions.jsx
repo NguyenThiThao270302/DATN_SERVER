@@ -191,16 +191,38 @@ class ActionProvider {
     }
   }
 
-  handleOfflinePayment() {
-    const botMessage = this.createChatBotMessage('Thanh toán offline thành công.');
-    message.success('Thanh toán offline thành công.')
-    this.updateChatbotState(botMessage);
+  async handleOfflinePayment() {
+    message.success('Đơn hàng của bạn tạo thành công')
+    const orderData = localStorage.getItem('listBookBuyWhenChatBot');
+    const orderDetails = JSON.parse(orderData);
+    const addressId = localStorage.getItem('delivery_address' || 0);
+    let data = JSON.stringify({
+      "name_book": orderDetails.name_book,
+      "quantity": orderDetails.quantity,
+      "address": orderDetails.address,
+      "email": orderDetails.email,
+      "phone_number": orderDetails.phone_number,
+      "addres_id": addressId
+    });
+    try {
+      const response = await axios.post('127.0.0.1:8080/manager/order/api/create/order/use/bot', data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (response.data.code === 0) {
+        window.location.reload();
+      } else {
+        message.error('Lỗi kết nối internet');
+      }
+    } catch (error) {
+      message.error('Lỗi kết nối internet');
+    }
   }
+  
   giolamViec() {
-    // Define the working hours message
     const workingHoursMessage = `Giờ làm việc của chúng tôi như sau:\n- Thứ Hai đến Thứ Sáu: 8:00 - 17:00\n- Thứ Bảy: 9:00 - 12:00\n- Chủ Nhật: Nghỉ`;
 
-    // Create and update the chatbot state with the working hours message
     const botMessage = this.createChatBotMessage(workingHoursMessage);
     this.updateChatbotState(botMessage);
   }
