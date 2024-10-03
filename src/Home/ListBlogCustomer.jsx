@@ -4,7 +4,6 @@ import { Button, Dropdown, Image, Menu, message, Spin } from 'antd';
 import { GiArmoredBoomerang } from 'react-icons/gi';
 import axios from 'axios';
 import ListBookHome from './ListBookHome';
-import ChatBot from '../ChatBot/ChatBot';
 // import styles from './index_header.module.css';
 import FooterHeader from '../Utils/FooterHeader';
 import DetailAuthorBook from './DetailAuthorBook';
@@ -153,10 +152,6 @@ function ListBlogCustomer() {
             <div>
                 <ListBlogUtils/>
             </div>
-
-            <span>
-                <ChatBot />
-            </span>
 
             <div className="layout-footer">            
                 <FooterHeader />

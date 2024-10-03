@@ -1,6 +1,5 @@
 import { message } from 'antd';
-import axios, { formToJSON } from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
+import axios from 'axios';
 
 class ActionProvider {
   constructor(createChatBotMessage, setStateFunc) {
@@ -10,7 +9,7 @@ class ActionProvider {
 
   handleDefault() {
     const botMessage = this.createChatBotMessage(
-      'Xin lỗi, tôi không hiểu rõ ý của bạn. Bạn có thể diễn đạt lại được không?'
+      'muốn hỏi gì nói nhanh'
     );
     this.updateChatbotState(botMessage);
   }
@@ -85,7 +84,6 @@ class ActionProvider {
       this.updateChatbotState(botMessage);
     }
   }
-
 
   async handleSearch(message) {
     try {
@@ -219,7 +217,7 @@ class ActionProvider {
       message.error('Lỗi kết nối internet');
     }
   }
-  
+
   giolamViec() {
     const workingHoursMessage = `Giờ làm việc của chúng tôi như sau:\n- Thứ Hai đến Thứ Sáu: 8:00 - 17:00\n- Thứ Bảy: 9:00 - 12:00\n- Chủ Nhật: Nghỉ`;
 
@@ -227,6 +225,27 @@ class ActionProvider {
     this.updateChatbotState(botMessage);
   }
 
+  async sachBanChay() {
+    try {
+      const response = await axios.get('http://127.0.0.1:8080/manager/book/list/use/bot/banchay');
+
+      if (response.data.code === 0) {
+        const books = response.data.body;
+        let botMessageContent = "Danh sách sách bán chạy:\n";
+
+        books.forEach((book) => {
+          botMessageContent += `- Tên sách: ${book.name_book}, Giá: ${book.price}, Tác giả: ${book.authort_book}\n`;
+        });
+
+        const botMessage = this.createChatBotMessage(botMessageContent);
+        this.updateChatbotState(botMessage);
+      } else {
+        message.error('Lỗi kết nối, vui lòng thử lại');
+      }
+    } catch (error) {
+      message.error('Lỗi kết nối, vui lòng thử lại');
+    }
+  }
 
   updateChatbotState(message) {
     this.setState((prevState) => ({

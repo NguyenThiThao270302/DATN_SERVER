@@ -29,7 +29,6 @@ import ListDetailBookWhenBuy from './ListDetailBookWhenBuy';
 import ChiTiettacGiaVaTheoSach from './ChiTiettacGiaVaTheoSach';
 import ManSubmirMuaHangTuGioHang from './ManSubmirMuaHangTuGioHang';
 import ListBlogCustomer from './ListBlogCustomer';
-import ChatBots from '../Utils/ChatBots/ChatBot';
 import './GioiThieu.css';
 import NhaNamProfile from './BasicGioiThieu';
 
@@ -330,10 +329,6 @@ function GioiThieu() {
                 />
             </div>
 
-
-            <span>
-                <ChatBots />
-            </span>
             <NhaNamProfile/>
 
 

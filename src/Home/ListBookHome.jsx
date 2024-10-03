@@ -321,10 +321,6 @@ function ListBookHome() {
 
             <ManLayRaListSachTheoLoai />
 
-            <span>
-                <ChatBot />
-            </span>
-
             <div style={{marginTop:'68px'}}>
                 <FooterHeader />
             </div>

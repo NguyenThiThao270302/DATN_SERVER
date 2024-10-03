@@ -6,7 +6,10 @@ class MessageParser {
     parse(message) {
         const lowerCaseMessage = message.toLowerCase();
 
-        if (lowerCaseMessage.includes('xin chào')) {
+        if (lowerCaseMessage.includes('xin chào') ||
+            lowerCaseMessage.includes('hi') ||
+            lowerCaseMessage.includes('chào')
+        ) {
             this.actionProvider.handleDefault();
         } else if (
             lowerCaseMessage.includes('đơn hàng nào đang giao') ||
@@ -28,15 +31,18 @@ class MessageParser {
         } else if (
             lowerCaseMessage.includes('đơn hàng hôm qua')
         ) {
-
-        }else if(
+        } else if (
             lowerCaseMessage.includes('thanh toán online') && localStorage.getItem('statusBuyUseChatBot')
-        ){
+        ) {
             this.actionProvider.handleOnlinePayment();
-        }else if(
+        } else if (
             lowerCaseMessage.includes('thanh toán offline') && localStorage.getItem('statusBuyUseChatBot')
-        ){
+        ) {
             this.actionProvider.handleOfflinePayment();
+        } else if (
+            lowerCaseMessage.includes('sách bán chạy')
+        ) {
+            this.actionProvider.sachBanChay();
         } else {
             this.actionProvider.handleSearch(message);  // Pass the original message
         }

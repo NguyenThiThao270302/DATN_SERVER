@@ -28,7 +28,6 @@ import ListBookByPublicsher from './ListBookByPublicsher';
 import ListDetailBookWhenBuy from './ListDetailBookWhenBuy';
 import ManSubmirMuaHangTuGioHang from './ManSubmirMuaHangTuGioHang';
 import ListBlogCustomer from './ListBlogCustomer';
-import ChatBots from '../Utils/ChatBots/ChatBot';
 import ListBookByAuthorName from './ListBookByAuthorName';
 const { Title } = Typography;
 
@@ -319,10 +318,6 @@ function ChiTiettacGiaVaTheoSach() {
                 </div>
             </div>
 
-
-            <span>
-                <ChatBots />
-            </span>
             <div>
                 <DetailAuthorBook authorBooName={localStorage.getItem('author')} />
             </div>

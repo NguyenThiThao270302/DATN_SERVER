@@ -23,13 +23,13 @@ function ChatBots() {
   return (
     <div className="chatbot-container">
       <BsRobot onClick={toggleChatbot} style={{ cursor: 'pointer' }} fontSize={35} />
-      {isOpen && ( // Conditionally render the chatbot
+      {isOpen && (
         <div className="chatbot">
           <Chatbot
             config={config}
             messageParser={MessageParser}
             actionProvider={ActionProvider}
-            headerText='Sách Thông Minh 🤖'
+            headerText='🤖'
           />
         </div>
       )}

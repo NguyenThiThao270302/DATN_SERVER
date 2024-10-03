@@ -9,8 +9,8 @@ function TypeBook() {
     const [loading, setLoading] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [editingBook, setEditingBook] = useState(null); // Loại sách đang sửa
-    const [editForm] = Form.useForm(); // Form để update loại sách
+    const [editingBook, setEditingBook] = useState(null);
+    const [editForm] = Form.useForm();
 
     const fetchTypeBooks = async () => {
         setLoading(true);
@@ -72,9 +72,9 @@ function TypeBook() {
     };
 
     const handleEdit = (record) => {
-        setEditingBook(record); // Lưu thông tin sách đang chỉnh sửa
-        setIsModalVisible(true); // Mở modal
-        editForm.setFieldsValue({ name: record.name }); // Điền tên sách hiện tại vào form
+        setEditingBook(record);
+        setIsModalVisible(true);
+        editForm.setFieldsValue({ name: record.name });
     };
 
     const handleUpdate = async () => {
@@ -88,7 +88,7 @@ function TypeBook() {
             if (response.data.code === 0) {
                 message.success('Cập nhật loại sách thành công!');
                 fetchTypeBooks();
-                setIsModalVisible(false); // Đóng modal
+                setIsModalVisible(false);
             } else {
                 message.error('Không thể cập nhật loại sách.');
             }
@@ -98,16 +98,17 @@ function TypeBook() {
         }
     };
 
+    const handleSearch = (value) => {
+        setSearchText(value);
+        const filtered = typeBooks.filter(book =>
+            book.name.toLowerCase().includes(value.toLowerCase())
+        );
+        setFilteredBooks(filtered);
+    };
+
     useEffect(() => {
         fetchTypeBooks();
     }, []);
-
-    useEffect(() => {
-        const filtered = typeBooks.filter(book =>
-            book.name.toLowerCase().includes(searchText.toLowerCase())
-        );
-        setFilteredBooks(filtered);
-    }, [searchText, typeBooks]);
 
     const columns = [
         {
@@ -120,7 +121,6 @@ function TypeBook() {
             dataIndex: 'name',
             key: 'name',
         },
-
         {
             title: 'Hành động',
             key: 'action',
@@ -153,16 +153,19 @@ function TypeBook() {
                         onChange={(e) => setNewTypeName(e.target.value)}
                         style={{ width: 300 }}
                     />
-                    <Button type="primary" onClick={addTypeBook}>
+                    <Button style={{ height: '39px' }} type="primary" onClick={addTypeBook}>
                         Thêm
                     </Button>
                 </Space>
                 <Space style={{ marginTop: 16 }}>
-                    <Input
+                    <Input.Search
                         placeholder="Tìm kiếm theo tên loại sách"
-                        value={searchText}
-                        onChange={(e) => setSearchText(e.target.value)}
-                        style={{ width: 300 }}
+                        allowClear
+                        enterButton="Tìm kiếm"
+                        size="large"
+                        onSearch={handleSearch}
+                        onChange={(e) => handleSearch(e.target.value)}
+                        style={{ marginBottom: 16 }}
                     />
                 </Space>
             </Space>
@@ -173,8 +176,6 @@ function TypeBook() {
                 loading={loading}
                 pagination={{ pageSize: 10 }}
             />
-            
-            {/* Modal for editing */}
             <Modal
                 title="Cập nhật loại sách"
                 visible={isModalVisible}
