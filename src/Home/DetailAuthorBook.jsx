@@ -4,13 +4,14 @@ import { Col, Image, Row } from "antd";
 import styles from './DetailAuthorBook.module.css'; // Import CSS Module
 
 function DetailAuthorBook({ authorBooName }) {
-    const [author, setAuthor] = useState(null); // State to store author data
-    const [loading, setLoading] = useState(true); // State to track loading status
-    const [error, setError] = useState(null); // State to track errors
+    const [author, setAuthor] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        const author = "Nam Cao";
         const fetchAuthorDetails = async () => {
+            const author = localStorage.getItem('authorName');
+
             try {
                 const response = await axios.get(
                     'http://127.0.0.1:8080/manager/author_book/details',
@@ -29,7 +30,7 @@ function DetailAuthorBook({ authorBooName }) {
             }
         };
 
-        fetchAuthorDetails(); // Call the function on component mount
+        fetchAuthorDetails();
     }, []);
 
     if (loading) {
@@ -60,9 +61,9 @@ function DetailAuthorBook({ authorBooName }) {
                                 fontSize: '18px',
                                 color: '#555',
                                 marginBottom: '10px',
-                                fontFamily: 'Georgia, serif', // Custom font
-                                textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)', // Shadow effect
-                                fontWeight: 'normal' // Optional, if you want a normal font-weight
+                                fontFamily: 'Georgia, serif',
+                                textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)',
+                                fontWeight: 'normal'
                             }}>
                                 <strong>Tiểu sử:</strong> {author.biography}
                             </p>

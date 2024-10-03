@@ -1,14 +1,11 @@
 
-import ListOrder from "./admin/ListOrder";
 import CheckLogin from "./common/CheckLogin";
 
 
 function App() {
   return (
-    <div>
- 
+    <div> 
       <CheckLogin/>
-      {/* <ListOrder/> */}
     </div>
   );
 }

@@ -52,7 +52,6 @@ function ChiTiettacGiaVaTheoSach() {
     const [nextListBookByAuthor, setNextListBookByAuthor] = useState(false);
     const [nextListBookByPublicSher, setNextListBookByPublicSher] = useState(false);
     const [nextBlog, setNextBlog] = useState(false);
-
     const cartRef = useRef(null);
 
     const openDrawerCart = () => {
@@ -103,7 +102,6 @@ function ChiTiettacGiaVaTheoSach() {
             });
     }, []);
 
-    // Load liked books from cookies
     const loadLikedBooks = () => {
         const liked = Cookies.get('likedBooks');
         if (liked) {
@@ -116,7 +114,7 @@ function ChiTiettacGiaVaTheoSach() {
         setLoading(true);
         try {
             const response = await axios.get('http://127.0.0.1:8080/manager/type_book/list');
-            console.log('Response data:', response.data); // Debugging
+            console.log('Response data:', response.data);
             if (response.data.code === 0) {
                 setAuthors(response.data.body);
             } else {
@@ -162,15 +160,12 @@ function ChiTiettacGiaVaTheoSach() {
         setIsNextFindBook(true);
     };
 
-    // Handle the author name change event from ListAuthorBookButton
     const handleAuthorNameChange = (name) => {
         setNameAuthorBook(name);
-        setIsNextAuthorBook(true); // Set to true when an author name is selected
+        setIsNextAuthorBook(true);
     };
 
-    // Handle item click event from ListAuthorBookButton
     const handleItemClick = () => {
-        // Perform additional actions if needed
         setIsNextAuthorBook(true);
     };
 
@@ -180,7 +175,6 @@ function ChiTiettacGiaVaTheoSach() {
 
 
     if (isNextBuy) {
-        // return <DetailBuy book_id={selectedBookId} />;
         return <ListDetailBookWhenBuy />
     }
 
@@ -238,12 +232,12 @@ function ChiTiettacGiaVaTheoSach() {
 
 
                                     style={{
-                                        border: 'none',           // Remove border
-                                        background: 'none',        // Remove background
-                                        boxShadow: 'none',         // Remove any shadow
-                                        padding: 0,                // Optional: adjust padding for button size
-                                        color: '#1890ff',          // Text color (you can customize)
-                                        cursor: 'pointer',          // Pointer for hover effect
+                                        border: 'none',
+                                        background: 'none',
+                                        boxShadow: 'none',
+                                        padding: 0,
+                                        color: '#1890ff',
+                                        cursor: 'pointer',
                                         fontSize: '17px',
                                         color: 'black'
                                     }}
@@ -269,7 +263,7 @@ function ChiTiettacGiaVaTheoSach() {
                                 placeholder='Tìm kiếm ...'
                                 className={styles.searchInput}
                                 value={nameBook}  // Gán giá trị từ state
-                                onChange={(e) => setNameBook(e.target.value)}  // Cập nhật state khi người dùng nhập
+                                onChange={(e) => setNameBook(e.target.value)}
                             />
                             <Button onClick={handleSearch} className={styles.searchButton}>
                                 <CiSearch className="icon" />
@@ -322,10 +316,10 @@ function ChiTiettacGiaVaTheoSach() {
                 <DetailAuthorBook authorBooName={localStorage.getItem('author')} />
             </div>
             <div style={{ marginTop: '50px' }}>
-                <h1 style={{ color: 'green',marginLeft:'260px' }}>Sách cùng loại</h1>
-               <div style={{marginLeft:'200px'}}>
-               <ListBookByAuthorName />
-               </div>
+                <h1 style={{ color: 'green', marginLeft: '260px' }}>Sách cùng loại</h1>
+                <div style={{ marginLeft: '200px' }}>
+                    <ListBookByAuthorName />
+                </div>
             </div>
             <div className="layout-footer">
                 <FooterHeader />

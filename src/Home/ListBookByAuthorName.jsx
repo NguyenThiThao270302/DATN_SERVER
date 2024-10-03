@@ -10,9 +10,9 @@ function ListBookByAuthorName() {
     const handleGetListBookByAuthorName = async () => {
         try {
             // Simulate a 3-second delay
-            await new Promise(resolve => setTimeout(resolve, 3000));
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
-            const author = "Nam Cao";
+            const author = localStorage.getItem('authorName');
             if (!author) {
                 console.error('No author found in localStorage');
                 setNoBooksFound(true);

@@ -32,11 +32,12 @@ function ListAuthorBookButton({ onAuthorNameChange, onEventClick }) {
 
     // Handle menu item click
     const handleMenuClick = (e) => {
-        const selected = authors.find(author => author.id === parseInt(e.key, 10)); // Ensure ID comparison is correct
+        const selected = authors.find(author => author.id === parseInt(e.key, 10));
         if (selected) {
             setSelectedAuthor(selected);
-            onAuthorNameChange(selected.name); // Notify parent with selected author's name
-            if (onEventClick) onEventClick(); // Call the onEventClick function if provided
+            onAuthorNameChange(selected.name);
+            localStorage.setItem('authorName',selected.name)
+            if (onEventClick) onEventClick();
         }
     };
 

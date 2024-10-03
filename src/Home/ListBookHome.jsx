@@ -1,29 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './home_index.module.css';
 import { FcHome } from 'react-icons/fc';
-import { Button, Drawer, Dropdown, Image, Input, Menu, message, Modal, Spin, Tooltip, Typography } from 'antd';
+import { Button, Drawer, Dropdown, Input, Menu, message, Modal, Tooltip, Typography } from 'antd';
 import Login from '../common/Login';
 import { CiLogin, CiSearch } from 'react-icons/ci';
 import { GiArmoredBoomerang } from 'react-icons/gi';
 import { AiOutlineShoppingCart } from 'react-icons/ai';
 import Cookies from 'js-cookie';  // Import js-cookie
 import axios from 'axios';
-import { MdSell } from 'react-icons/md';
 import ProFile from '../user/Profile';
 import ListCart from '../user/ListCart';
 import { CgProfile } from 'react-icons/cg';
 import './index.module.css';
-import ChatBot from '../ChatBot/ChatBot';
-import ListPublicSher from './ListPublicSher';
-import AuthorBook from './AuthorBook';
-import SliderCard from '../Test/Pages2';
 import styles from './index_header.module.css';
 import FooterHeader from '../Utils/FooterHeader';
 import styleLayout from './layout.module.css';  // Import CSS module
 import GetListBookByNameBook from './GetListBookByNameBook';
 import DetailAuthorBook from './DetailAuthorBook';
 import ListAuthorBookButton from './ListAuthorBookSelect';
-import ListBookLate from './ListBookLate';
 import ListBookByPublicsher from './ListBookByPublicsher';
 import ListDetailBookWhenBuy from './ListDetailBookWhenBuy';
 import ChiTiettacGiaVaTheoSach from './ChiTiettacGiaVaTheoSach';
@@ -163,15 +157,12 @@ function ListBookHome() {
         setIsNextFindBook(true);
     };
 
-    // Handle the author name change event from ListAuthorBookButton
     const handleAuthorNameChange = (name) => {
         setNameAuthorBook(name);
-        setIsNextAuthorBook(true); // Set to true when an author name is selected
+        setIsNextAuthorBook(true);
     };
 
-    // Handle item click event from ListAuthorBookButton
     const handleItemClick = () => {
-        // Perform additional actions if needed
         setIsNextAuthorBook(true);
     };
 
@@ -181,7 +172,6 @@ function ListBookHome() {
 
 
     if (isNextBuy) {
-        // return <DetailBuy book_id={selectedBookId} />;
         return <ListDetailBookWhenBuy />
     }
 
@@ -239,12 +229,12 @@ function ListBookHome() {
 
 
                                     style={{
-                                        border: 'none',           // Remove border
-                                        background: 'none',        // Remove background
-                                        boxShadow: 'none',         // Remove any shadow
-                                        padding: 0,                // Optional: adjust padding for button size
-                                        color: '#1890ff',          // Text color (you can customize)
-                                        cursor: 'pointer',          // Pointer for hover effect
+                                        border: 'none',      
+                                        background: 'none',      
+                                        boxShadow: 'none', 
+                                        padding: 0,
+                                        color: '#1890ff',
+                                        cursor: 'pointer',
                                         fontSize: '17px',
                                         color: 'black'
                                     }}

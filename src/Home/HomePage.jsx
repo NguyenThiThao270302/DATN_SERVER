@@ -166,7 +166,7 @@ function HomePage() {
     };
 
     const handleAuthorNameChange = (name) => {
-        setNameAuthorBook(name);
+        // setNameAuthorBook(name);
         setIsNextAuthorBook(true);
     };
 
