@@ -17,6 +17,7 @@ function BieuDoLineChart() {
                 const processedData = processOrders(orders);
                 setChartData(processedData);
                 setFilteredData(processedData);
+            } else {
                 message.error('Lỗi kết nối Internet, vui lòng thử lại');
             }
         } catch (error) {
@@ -54,8 +55,6 @@ function BieuDoLineChart() {
         if (dateRange[0] && dateRange[1]) {
             const startDate = dateRange[0].format("DD/MM/YYYY");
             const endDate = dateRange[1].format("DD/MM/YYYY");
-
-            // Filter data based on selected date range
             const filtered = chartData.filter(data => {
                 return data.date >= startDate && data.date <= endDate;
             });
