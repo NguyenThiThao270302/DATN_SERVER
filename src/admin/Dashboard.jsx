@@ -17,7 +17,6 @@ import AuthorBook from './AuthorBook';
 import Publishers from './Publishers';
 import TypeBook from './TypeBook';
 import ListOrder from './ListOrder';
-import Statistical from './Statistical';
 import ListCustomer from './ListCustomer';
 import LoyPoints from './LoyPoints';
 import BieuDoThongKe from './BieuDoThongKe';
@@ -170,7 +169,7 @@ function Dashboard() {
 
     return (
         <div style={{ height: 'auto', display: 'flex', flexDirection: 'column' }}>
-            <Layout style={{ height: 'auto' }}>
+            <Layout style={{ height: 'auto',marginTop:'-60px'}}>
                 <Header
                     style={{
                         display: 'flex',
