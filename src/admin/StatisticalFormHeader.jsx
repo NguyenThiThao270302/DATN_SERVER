@@ -8,15 +8,16 @@ function StatisticalFormHeader() {
     const [orderDetails, setOrderDetails] = useState([]);
     const [filteredOrders, setFilteredOrders] = useState([]);
     const [selectedDate, setSelectedDate] = useState(dayjs());
-    const [countNewUser,setCountNewUser] = useState(0);
+    const [countNewUser, setCountNewUser] = useState(0);
+
     const handleGetInforOrder = async () => {
         try {
-            const response = await axios.get('http://127.0.0.1:8080/manager/order/api/admin/day');
+            const response = await axios.get('http://127.0.0.1:8080/manager/order/api/listorder/admin/header');
 
             if (response.data.code === 0) {
                 setOrderDetails(response.data.body.order_details_admin);
                 setFilteredOrders(response.data.body.order_details_admin);
-                setCountNewUser(response.data.setCountNewUser);
+                setCountNewUser(response.data.body.user.length); // Count new users based on the user array
             }
         } catch (error) {
             console.error('Error fetching order information:', error);
@@ -29,7 +30,7 @@ function StatisticalFormHeader() {
 
     useEffect(() => {
         const filtered = orderDetails.filter(order => 
-            dayjs(order.create_time).isSame(selectedDate, 'day')
+            dayjs(order.time_user_buy, 'DD/MM/YYYY').isSame(selectedDate, 'day')
         );
         setFilteredOrders(filtered);
     }, [selectedDate, orderDetails]);
@@ -41,7 +42,7 @@ function StatisticalFormHeader() {
     };
 
     const totalProducts = filteredOrders.reduce((sum, order) => 
-        sum + order.items.reduce((itemSum, item) => itemSum + item.quantity, 0), 0
+        sum + order.quantity, 0 // Adjusted to sum quantity directly from orders
     , 0);
 
     return (
