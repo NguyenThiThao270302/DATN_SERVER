@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './home_index.module.css';
 import { FcHome } from 'react-icons/fc';
-import { Button, Drawer, Dropdown, Image, Input, Menu, message, Modal, Spin, Tooltip, Typography } from 'antd';
+import { Button, Drawer, Dropdown, Image, Input, Menu, message, Modal, Tooltip, Typography } from 'antd';
 import Login from '../common/Login';
 import { CiLogin, CiSearch } from 'react-icons/ci';
 import { GiArmoredBoomerang } from 'react-icons/gi';
@@ -30,6 +30,7 @@ import ChiTiettacGiaVaTheoSach from './ChiTiettacGiaVaTheoSach';
 import ManSubmirMuaHangTuGioHang from './ManSubmirMuaHangTuGioHang';
 import ListBlogCustomer from './ListBlogCustomer';
 import ChatBots from '../Utils/ChatBots/ChatBot';
+import GioiThieu from './GioiThieu';
 const { Title } = Typography;
 
 
@@ -53,6 +54,7 @@ function HomePage() {
     const [nextListBookByAuthor, setNextListBookByAuthor] = useState(false);
     const [nextListBookByPublicSher, setNextListBookByPublicSher] = useState(false);
     const [nextBlog, setNextBlog] = useState(false);
+    const [gioiThieu, setGioiThieu] = useState(false);
 
     const cartRef = useRef(null);
 
@@ -117,7 +119,7 @@ function HomePage() {
         setLoading(true);
         try {
             const response = await axios.get('http://127.0.0.1:8080/manager/type_book/list');
-            console.log('Response data:', response.data); // Debugging
+            console.log('Response data:', response.data);
             if (response.data.code === 0) {
                 setAuthors(response.data.body);
             } else {
@@ -144,7 +146,7 @@ function HomePage() {
         const selectedAuthor = authors.find(author => author.id === parseInt(e.key, 10));
         if (selectedAuthor) {
             setSelectedAuthor(selectedAuthor);
-            localStorage.setItem('typebook',selectedAuthor.name);
+            localStorage.setItem('typebook', selectedAuthor.name);
             setIsNext(true);
         }
     };
@@ -163,15 +165,12 @@ function HomePage() {
         setIsNextFindBook(true);
     };
 
-    // Handle the author name change event from ListAuthorBookButton
     const handleAuthorNameChange = (name) => {
         setNameAuthorBook(name);
-        setIsNextAuthorBook(true); // Set to true when an author name is selected
+        setIsNextAuthorBook(true);
     };
 
-    // Handle item click event from ListAuthorBookButton
     const handleItemClick = () => {
-        // Perform additional actions if needed
         setIsNextAuthorBook(true);
     };
 
@@ -181,7 +180,6 @@ function HomePage() {
 
 
     if (isNextBuy) {
-        // return <DetailBuy book_id={selectedBookId} />;
         return <ListDetailBookWhenBuy />
     }
 
@@ -201,7 +199,7 @@ function HomePage() {
         return <ChiTiettacGiaVaTheoSach />
     }
 
-    if (nextListBookByPublicSher) {                                                                         
+    if (nextListBookByPublicSher) {
         return <ListBookByPublicsher />;
     }
 
@@ -214,6 +212,12 @@ function HomePage() {
     if (nextBlog) {
         return (
             <ListBlogCustomer />
+        )
+    }
+
+    if (gioiThieu) {
+        return (
+            <GioiThieu />
         )
     }
 
@@ -239,12 +243,12 @@ function HomePage() {
 
 
                                     style={{
-                                        border: 'none',           // Remove border
-                                        background: 'none',        // Remove background
-                                        boxShadow: 'none',         // Remove any shadow
-                                        padding: 0,                // Optional: adjust padding for button size
-                                        color: '#1890ff',          // Text color (you can customize)
-                                        cursor: 'pointer',          // Pointer for hover effect
+                                        border: 'none',
+                                        background: 'none',
+                                        boxShadow: 'none',
+                                        padding: 0,
+                                        color: '#1890ff',
+                                        cursor: 'pointer',
                                         fontSize: '17px',
                                         color: 'black'
                                     }}
@@ -264,13 +268,13 @@ function HomePage() {
                             )}
                         </li>
                         <li onClick={() => setNextBlog(true)}>Blog</li>
-                        <li>Giới thiệu</li>
+                        <li onClick={() => setGioiThieu(true)}>Giới thiệu</li>
                         <li className={styles.searchContainer}>
                             <Input
                                 placeholder='Tìm kiếm ...'
                                 className={styles.searchInput}
-                                value={nameBook}  // Gán giá trị từ state
-                                onChange={(e) => setNameBook(e.target.value)}  // Cập nhật state khi người dùng nhập
+                                value={nameBook}
+                                onChange={(e) => setNameBook(e.target.value)}
                             />
                             <Button onClick={handleSearch} className={styles.searchButton}>
                                 <CiSearch className="icon" />

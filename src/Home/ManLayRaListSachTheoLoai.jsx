@@ -13,20 +13,18 @@ function ManLayRaListSachTheoLoai() {
     const [priceTo, setPriceTo] = useState(null);
     const [sortBy, setSortBy] = useState(null);
     const [backHome, setbackHome] = useState(false);
-    const [nameTypeBook, setNameTypeBook] = useState(null); // Tạo state để lưu tên loại sách
+    const [nameTypeBook, setNameTypeBook] = useState(null);
 
     const fetchListBookByTypeBook = async () => {
         try {
             const response = await axios.get(
-                `http://127.0.0.1:8080/manager/book/list/type_book?name=${(nameTypeBook)}`
+                `http://127.0.0.1:8080/manager/book/list/type_book?name=${nameTypeBook}`
             );
-
             const data = response.data;
 
             if (data.code === 0) {
-                setBooks(data.body.book_detail_list);
-                setFilteredBooks(data.body.book_detail_list);
-                console.log("list book", data);
+                setBooks(data.body.book_detail_list || []); // Đảm bảo mảng không bị null
+                setFilteredBooks(data.body.book_detail_list || []); // Đảm bảo mảng không bị null
             } else {
                 console.error("Error fetching books:", data.message);
             }
@@ -38,8 +36,8 @@ function ManLayRaListSachTheoLoai() {
     useEffect(() => {
         const timeoutId = setTimeout(() => {
             const typeBookFromLocalStorage = localStorage.getItem('typebook');
-            setNameTypeBook(typeBookFromLocalStorage); // Cập nhật state nameTypeBook
-        }, 1000);
+            setNameTypeBook(typeBookFromLocalStorage);
+        }, 100); // Đặt delay 0.1s
 
         return () => clearTimeout(timeoutId);
     }, []);
@@ -103,8 +101,8 @@ function ManLayRaListSachTheoLoai() {
         setFilteredBooks(applySorting(filteredBooks));
     }, [sortBy]);
 
-    if (!filteredBooks.length) {
-        return <div>
+    if (!filteredBooks || filteredBooks.length === 0) {
+        return <div style={{marginTop:'50px'}}>
             <Button onClick={() => setbackHome(true)}>Quay lại</Button>
             Chưa có sách nào
         </div>;
@@ -116,7 +114,7 @@ function ManLayRaListSachTheoLoai() {
 
     return (
         <div>
-            <div style={{ display: 'flex', justifyContent: 'center',marginTop:'100px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '100px' }}>
                 <Space>
                     <Button onClick={() => handleSort('desc')} style={{ height: '42px' }}>Giá từ cao đến thấp</Button>
                     <Button onClick={() => handleSort('asc')} style={{ height: '42px' }}>Giá từ thấp đến cao</Button>

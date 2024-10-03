@@ -1,0 +1,18 @@
+.tabLabel {
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.icon {
+    margin-right: 8px; /* Adds some space between the icon and label */
+}
+
+.favoriteLabel {
+    font-size: 17px;
+    color: #4a4a4a;
+}
+
+.iconManagement {
+    font-size: 30px;
+}
