@@ -9,8 +9,10 @@ const Favorite = () => {
   const [likedBooks, setLikedBooks] = useState({});
 
   useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem('userData'));
+
     // Fetch the data from the API
-    axios.get('http://127.0.0.1:8080/manager/favorite/list?id=9861572')
+    axios.get(`http://127.0.0.1:8080/manager/favorite/list?id=${userData.id}`)
       .then(response => {
         if (response.data.code === 0) {
           setData(response.data.body.books);

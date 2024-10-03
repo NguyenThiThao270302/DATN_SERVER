@@ -50,7 +50,7 @@ const ListOrder = () => {
 
     const fetchOrders = async () => {
         try {
-            const response = await axios.get('http://127.0.0.1:8080/manager/order/api/listorder/admin');
+            const response = await axios.get('http://127.0.0.1:8080/manager/order/api/list/process');
             if (response.data.code === 0) {
                 const apiData = response.data.body.map(order => ({
                     ...order,

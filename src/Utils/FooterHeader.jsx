@@ -33,9 +33,11 @@ const FooterHeader = () => {
         </div>
         <div className={styles.footerColumn}>
           <h4>Thông tin liên hệ</h4>
-          <p>Hưng Hà Thái Bình, Việt Nam</p>
-          <p>Email: contact@bookstore.vn</p>
-          <p>Điện thoại: +84 123 456 789</p>
+          <ul>
+            <li>Hưng Hà Thái Bình, Việt Nam</li>
+            <li>Email: contact@bookstore.vn</li>
+            <li>Điện thoại: +84 123 456 789</li>
+          </ul>
         </div>
       </div>
       <div className={styles.footerBottom}>
