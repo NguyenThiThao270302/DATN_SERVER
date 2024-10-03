@@ -106,14 +106,12 @@ function HomePage() {
             });
     }, []);
 
-    // Load liked books from cookies
     const loadLikedBooks = () => {
         const liked = Cookies.get('likedBooks');
         if (liked) {
             setLikedBooks(JSON.parse(liked));
         }
     };
-
 
     const fetchAuthors = async () => {
         setLoading(true);
@@ -166,7 +164,6 @@ function HomePage() {
     };
 
     const handleAuthorNameChange = (name) => {
-        // setNameAuthorBook(name);
         setIsNextAuthorBook(true);
     };
 

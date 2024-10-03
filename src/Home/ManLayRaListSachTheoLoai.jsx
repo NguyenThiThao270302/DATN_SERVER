@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 import styleCart from './list_book_home.module.css';
 import CardProduct from "./CardProduct";
 import { Button, Input, Space } from "antd";
+import { TiArrowBack } from "react-icons/ti";
 
-function ManLayRaListSachTheoLoai() {
+function ManLayRaListSachTheoLoai({ checkLenListBook }) {
     const [books, setBooks] = useState([]);
     const [filteredBooks, setFilteredBooks] = useState([]);
     const [inputPriceFrom, setInputPriceFrom] = useState(null);
@@ -12,7 +13,6 @@ function ManLayRaListSachTheoLoai() {
     const [priceFrom, setPriceFrom] = useState(null);
     const [priceTo, setPriceTo] = useState(null);
     const [sortBy, setSortBy] = useState(null);
-    const [backHome, setbackHome] = useState(false);
     const [nameTypeBook, setNameTypeBook] = useState(null);
 
     const fetchListBookByTypeBook = async () => {
@@ -23,8 +23,8 @@ function ManLayRaListSachTheoLoai() {
             const data = response.data;
 
             if (data.code === 0) {
-                setBooks(data.body.book_detail_list || []); // Đảm bảo mảng không bị null
-                setFilteredBooks(data.body.book_detail_list || []); // Đảm bảo mảng không bị null
+                setBooks(data.body.book_detail_list || []); // Ensure array is not null
+                setFilteredBooks(data.body.book_detail_list || []); // Ensure array is not null
             } else {
                 console.error("Error fetching books:", data.message);
             }
@@ -37,7 +37,7 @@ function ManLayRaListSachTheoLoai() {
         const timeoutId = setTimeout(() => {
             const typeBookFromLocalStorage = localStorage.getItem('typebook');
             setNameTypeBook(typeBookFromLocalStorage);
-        }, 100); // Đặt delay 0.1s
+        }, 100); // Delay 0.1s
 
         return () => clearTimeout(timeoutId);
     }, []);
@@ -47,6 +47,11 @@ function ManLayRaListSachTheoLoai() {
             fetchListBookByTypeBook();
         }
     }, [nameTypeBook]);
+
+    // Call the parent function with the length of the filtered books
+    useEffect(() => {
+        checkLenListBook && checkLenListBook(filteredBooks.length);
+    }, [filteredBooks, checkLenListBook]);
 
     const applyFilters = () => {
         let updatedBooks = [...books];
@@ -102,14 +107,15 @@ function ManLayRaListSachTheoLoai() {
     }, [sortBy]);
 
     if (!filteredBooks || filteredBooks.length === 0) {
-        return <div style={{marginTop:'50px'}}>
-            <Button onClick={() => setbackHome(true)}>Quay lại</Button>
-            Chưa có sách nào
+        return <div style={{ marginTop: '50px' }}>
+            <div>
+                <TiArrowBack
+                    style={{ fontSize: '25px', cursor: 'pointer' }} onClick={() => { window.location.reload() }} />
+            </div>
+            <div>
+                Chưa có sách nào
+            </div>
         </div>;
-    }
-
-    if (backHome) {
-        window.location.reload();
     }
 
     return (

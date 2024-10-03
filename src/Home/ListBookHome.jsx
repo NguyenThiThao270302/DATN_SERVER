@@ -47,6 +47,7 @@ function ListBookHome() {
     const [nextListBookByAuthor, setNextListBookByAuthor] = useState(false);
     const [nextListBookByPublicSher, setNextListBookByPublicSher] = useState(false);
     const [nextBlog, setNextBlog] = useState(false);
+    const [bookListLength, setBookListLength] = useState(0);
 
     const cartRef = useRef(null);
 
@@ -98,7 +99,6 @@ function ListBookHome() {
             });
     }, []);
 
-    // Load liked books from cookies
     const loadLikedBooks = () => {
         const liked = Cookies.get('likedBooks');
         if (liked) {
@@ -111,7 +111,7 @@ function ListBookHome() {
         setLoading(true);
         try {
             const response = await axios.get('http://127.0.0.1:8080/manager/type_book/list');
-            console.log('Response data:', response.data); // Debugging
+            console.log('Response data:', response.data);
             if (response.data.code === 0) {
                 setAuthors(response.data.body);
             } else {
@@ -308,13 +308,10 @@ function ListBookHome() {
                     </ul>
                 </div>
             </div>
-
-            <ManLayRaListSachTheoLoai />
-
-            <div style={{marginTop:'68px'}}>
+            <ManLayRaListSachTheoLoai checkLenListBook={(len) => setBookListLength(len)} />
+            <div style={{ marginTop: bookListLength === 0 ? '403px' : '68px' }}>
                 <FooterHeader />
             </div>
-
 
         </div>
     );
