@@ -1,20 +1,12 @@
 
-import BieuDoLineChart from "./admin/BieuDoThongKe";
-import Dashboard from "./admin/Dashboard";
-import StatisticalFormHeader from "./admin/StatisticalFormHeader";
 import CheckLogin from "./common/CheckLogin";
-import ChatBots from "./Utils/ChatBots/ChatBot";
 
 
 function App() {
   return (
     <div>
  
-      {/* <CheckLogin/> */}
-      {/* <ChatBots/> */}
-      {/* <Dashboard/> */}
-      {/* <BieuDoLineChart/> */}
-      <StatisticalFormHeader/>
+      <CheckLogin/>
     </div>
   );
 }
