@@ -233,19 +233,33 @@ function BieuDoLineChart() {
 
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
-            return (
-                <div className="custom-tooltip" style={{ backgroundColor: 'white', padding: '10px', border: '1px solid #cccccc' }}>
-                    <p className="label">{`${viewMode === 'hourly' ? 'Giờ' : 'Ngày'}: ${label}`}</p>
-                    {payload.map((entry, index) => (
-                        <p key={`item-${index}`} style={{ color: entry.color }}>
-                            {`${entry.name}: ${entry.value.toLocaleString()} VND`}
-                        </p>
-                    ))}
-                </div>
-            );
+            const filteredPayload = payload.filter(entry => {
+                // Lọc để chỉ hiển thị giá trị đang hover (hoàn thành hoặc chờ xử lý)
+                if (entry.dataKey === "Hoàn tất giao dịch" && entry.value > 0) {
+                    return true;
+                }
+                if (entry.dataKey === "Đang chờ xử lý" && entry.value > 0) {
+                    return true;
+                }
+                return false;
+            });
+    
+            if (filteredPayload.length > 0) {
+                return (
+                    <div className="custom-tooltip" style={{ backgroundColor: 'white', padding: '10px', border: '1px solid #cccccc' }}>
+                        <p className="label">{`${viewMode === 'hourly' ? 'Giờ' : 'Ngày'}: ${label}`}</p>
+                        {filteredPayload.map((entry, index) => (
+                            <p key={`item-${index}`} style={{ color: entry.color }}>
+                                {`${entry.name}: ${entry.value.toLocaleString()} VND`}
+                            </p>
+                        ))}
+                    </div>
+                );
+            }
         }
         return null;
     };
+    
 
     return (
         <div style={{ backgroundColor: '#e6fffb', padding: '20px', borderRadius: '8px' }}>
@@ -276,8 +290,6 @@ function BieuDoLineChart() {
                     />
                 </Space>
               
-
-                {/* Biểu đồ đường cho số lượng đơn hàng theo trạng thái */}
                 <h3 style={{ textAlign: 'center', marginTop: '40px', marginBottom: '20px' }}>Số lượng đơn hàng theo trạng thái</h3>
                 <ResponsiveContainer width="100%" height={400}>
                     <LineChart data={data}>

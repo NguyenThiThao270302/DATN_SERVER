@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Avatar, Table, Spin, Input } from 'antd';
+import { Avatar, Table, Spin, Input, Button, Popconfirm, message } from 'antd';
 
 const { Search } = Input;
 
@@ -49,6 +49,23 @@ function ListCustomer() {
         setPagination({ ...pagination, current: 1 }); // Reset to first page on search
     };
 
+    const handleEdit = (record) => {
+        message.info(`Editing user ${record.username}`);
+        // Implement your edit functionality here
+    };
+
+    const handleDelete = (id) => {
+        axios.delete(`http://127.0.0.1:8080/manager/user/${id}`)
+            .then(() => {
+                message.success('User deleted successfully');
+                fetchData(pagination.current, pagination.pageSize);
+            })
+            .catch((error) => {
+                console.error('There was an error deleting the user:', error);
+                message.error('Failed to delete user');
+            });
+    };
+
     const filteredCustomers = customers.filter(customer => {
         const { username, full_name, email } = customer;
         return (
@@ -85,6 +102,27 @@ function ListCustomer() {
             title: 'Số điện thoại',
             dataIndex: 'phone_number',
             key: 'phone_number',
+        },
+        {
+            title: 'Hành động',
+            key: 'action',
+            render: (_, record) => (
+                <span>
+                    <Button type="primary" onClick={() => handleEdit(record)}>
+                        Sửa
+                    </Button>
+                    <Popconfirm
+                        title="Bạn có chắc muốn xóa người dùng này không?"
+                        onConfirm={() => handleDelete(record.id)}
+                        okText="Có"
+                        cancelText="Không"
+                    >
+                        <Button type="link" >
+                            Xóa
+                        </Button>
+                    </Popconfirm>
+                </span>
+            ),
         },
     ];
 

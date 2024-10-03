@@ -4,6 +4,7 @@ import axios from 'axios';
 import moment from 'moment';
 import UpdateAuthorModal from './UpdateAuthorModal';  // Import modal
 import { FaCloudUploadAlt } from 'react-icons/fa';
+const { Search } = Input;
 
 function AuthorBook() {
     const [authors, setAuthors] = useState([]);  // List of authors
@@ -33,13 +34,17 @@ function AuthorBook() {
         }
     };
 
-    const handleSearch = () => {
+    const handleSearch = (e) => {
+        const value = e ? e.target.value : searchName; // Use event target value if available, otherwise use the current state
+    
+        setSearchName(value);
+    
         const filtered = authors.filter(author =>
-            author.name.toLowerCase().includes(searchName.toLowerCase())
+            author.name.toLowerCase().includes(value.toLowerCase())
         );
         setFilteredAuthors(filtered);
     };
-
+    
     useEffect(() => {
         fetchAuthors();
     }, []);
@@ -218,11 +223,19 @@ function AuthorBook() {
                     </Form.Item>
                 </div>
             </Form>
-            <Input
+
+            <Search
                 placeholder="Tìm theo Tên Tác Giả"
-                style={{ height: '40px', marginRight: '8px', width: '200px' }}
-                onChange={(e) => setSearchName(e.target.value)}
+                allowClear
+                enterButton="Tìm kiếm"
+                size="large"
+                value={searchName}  // Bind the search input value
+                onChange={handleSearch}  // Handle changes dynamically
+                onSearch={handleSearch}  // Also handle search button click
+                style={{ marginBottom: 16 }}
             />
+
+
             <Table
                 columns={columns}
                 dataSource={filteredAuthors}
