@@ -9,6 +9,7 @@ function StatisticalFormHeader() {
     const [filteredOrders, setFilteredOrders] = useState([]);
     const [selectedDate, setSelectedDate] = useState(dayjs());
     const [countNewUser, setCountNewUser] = useState(0);
+    const [userList, setUserList] = useState([]); // State for storing user data
 
     const handleGetInforOrder = async () => {
         try {
@@ -17,7 +18,14 @@ function StatisticalFormHeader() {
             if (response.data.code === 0) {
                 setOrderDetails(response.data.body.order_details_admin);
                 setFilteredOrders(response.data.body.order_details_admin);
-                setCountNewUser(response.data.body.user.length); // Count new users based on the user array
+                setUserList(response.data.body.user); // Store user data
+
+                // Count new users based on the user array for the current month
+                const newUserCount = response.data.body.user.filter(user => 
+                    dayjs(user.create_time).isSame(selectedDate, 'month')
+                ).length;
+
+                setCountNewUser(newUserCount);
             }
         } catch (error) {
             console.error('Error fetching order information:', error);
@@ -38,6 +46,11 @@ function StatisticalFormHeader() {
     const handleDateChange = (date) => {
         if (date) {
             setSelectedDate(date);
+            // Recalculate new user count when the date changes
+            const newUserCount = userList.filter(user => 
+                dayjs(user.create_time).isSame(date, 'month')
+            ).length; // Use userList instead of orderDetails.user
+            setCountNewUser(newUserCount);
         }
     };
 
