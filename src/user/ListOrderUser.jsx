@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Typography, Spin, Alert, Input, Button, message, Modal, Select } from 'antd';
+import { Table, Typography, Spin, Alert, Input, Button, message, Modal, Select, Descriptions } from 'antd';
 import axios from 'axios';
 
 const { Title } = Typography;
@@ -57,11 +57,11 @@ const ListOrderUser = () => {
 
     const filtered = data.filter(order => {
       const orderIdMatches = order.order_id.toString().includes(value);
-      const addressMatches = 
+      const addressMatches =
         order.address.district.toLowerCase().includes(lowercasedValue) ||
         order.address.commune.toLowerCase().includes(lowercasedValue) ||
         order.address.detailed.toLowerCase().includes(lowercasedValue);
-      const amountMatches = 
+      const amountMatches =
         !isNaN(numericValue) && (order.amount / 100).toFixed(2).includes(numericValue.toString());
 
       // Check for selected filters
@@ -80,7 +80,6 @@ const ListOrderUser = () => {
       content: 'Bạn có chắc chắn muốn hủy đơn hàng này?',
       onOk: () => handleCancel(id),
       onCancel() {
-        // message.info('Hủy hủy đơn hàng');
       },
     });
   };
@@ -90,18 +89,17 @@ const ListOrderUser = () => {
       .then(response => {
         if (response.data.code === 0) {
           message.success('Đơn hàng đã được hủy thành công');
-          // Update data in both state arrays
           setData(prevData => {
             return prevData.map(order =>
               order.order_id === id
-                ? { ...order, status: 11 } // Update status to "canceled"
+                ? { ...order, status: 11 }
                 : order
             );
           });
           setFilteredData(prevData => {
             return prevData.map(order =>
               order.order_id === id
-                ? { ...order, status: 11 } // Update status to "canceled"
+                ? { ...order, status: 11 }
                 : order
             );
           });
@@ -124,7 +122,6 @@ const ListOrderUser = () => {
     setSelectedOrder(null);
   };
 
-  // Filter options for order status
   const statusOptions = [
     { value: '', label: 'Tất cả trạng thái' },
     { value: '21', label: 'Đang Chờ Thanh Toán Online' },
@@ -134,7 +131,6 @@ const ListOrderUser = () => {
     { value: '9', label: 'Đã Giao Hàng và Thanh Toán' },
   ];
 
-  // Filter options for payment types
   const paymentTypeOptions = [
     { value: '', label: 'Tất cả loại thanh toán' },
     { value: '27', label: 'Thanh Toán Online' },
@@ -191,21 +187,21 @@ const ListOrderUser = () => {
       key: 'action',
       render: (text, record) => {
         const { status, order_id } = record;
-        const canCancel = [19, 23].includes(status); // Orders that can be canceled
+        const canCancel = [19, 23].includes(status);
 
         return (
           <>
             {canCancel && (
-              <Button 
-                type="primary" 
-                danger 
+              <Button
+                type="primary"
+                danger
                 onClick={() => confirmCancel(order_id)}
               >
                 Hủy Đơn Hàng
               </Button>
             )}
-            <Button 
-              type="link" 
+            <Button
+              type="link"
               onClick={() => showOrderDetails(record)}
             >
               Xem Chi Tiết
@@ -216,11 +212,9 @@ const ListOrderUser = () => {
     },
   ];
 
-  // Loading and error handling
   if (loading) return <Spin tip="Đang Tải..." />;
   if (error) return <Alert message="Lỗi" description={error} type="error" />;
 
-  // Reset filters and data
   const handleReset = () => {
     setSelectedStatus('');
     setSelectedPaymentType('');
@@ -267,7 +261,7 @@ const ListOrderUser = () => {
         ))}
       </Select>
       <Button type="default" onClick={handleReset} style={{ marginLeft: 8 }}>
-      mặc định
+        mặc định
       </Button>
       <Table
         dataSource={filteredData}
@@ -275,14 +269,50 @@ const ListOrderUser = () => {
         rowKey="order_id"
         style={{ marginTop: 16 }}
       />
+
       <Modal
         title="Chi Tiết Đơn Hàng"
         visible={isModalVisible}
         onCancel={handleModalClose}
         footer={null}
       >
-        <pre>{JSON.stringify(selectedOrder, null, 2)}</pre>
+        {selectedOrder && (
+          <Descriptions bordered column={1}>
+            <Descriptions.Item label="Mã Đơn Hàng">{selectedOrder.order_id}</Descriptions.Item>
+            <Descriptions.Item label="Thời Gian mua">
+              {new Date(selectedOrder.create_time).toLocaleString()}
+            </Descriptions.Item>
+            <Descriptions.Item label="Số Tiền">
+              {(selectedOrder.amount / 100).toFixed(2)} VND
+            </Descriptions.Item>
+            <Descriptions.Item label="Ngày Dự Kiến Giao">
+              {new Date(selectedOrder.estimated_date).toLocaleString()}
+            </Descriptions.Item>
+            <Descriptions.Item label="Trạng Thái">
+              {
+                selectedOrder.status === 11 ? 'Đang chờ xác nhận' :
+                  selectedOrder.status === 17 ? 'Đang chuẩn bị đơn hàng' :
+                    selectedOrder.status === 21 ? 'Đang giao hàng' :
+                      selectedOrder.status === 19 ? 'Đang chờ vận chuyển' :
+                        selectedOrder.status === 23 ? 'Đơn hàng đã giao và hoàn tất' :
+                          selectedOrder.status === 25 ? 'Đơn Hàng Đã Hủy' :
+                            'Không Xác Định'
+              }
+            </Descriptions.Item>
+            <Descriptions.Item label="Loại Thanh Toán">
+              {selectedOrder.payment_type === 25 ? 'Thanh Toán Online' :
+                selectedOrder.payment_type === 27 ? 'Thanh Toán Khi Nhận Hàng' :
+                  'Không Xác Định'}
+            </Descriptions.Item>
+            <Descriptions.Item label="Địa Chỉ">
+              {`${selectedOrder.address.detailed}, ${selectedOrder.address.commune}, ${selectedOrder.address.district}, ${selectedOrder.address.province}`}
+            </Descriptions.Item>
+            <Descriptions.Item label="Email">{selectedOrder.address.email}</Descriptions.Item>
+            <Descriptions.Item label="Số Điện Thoại">{selectedOrder.address.phone_number}</Descriptions.Item>
+          </Descriptions>
+        )}
       </Modal>
+
     </div>
   );
 };
