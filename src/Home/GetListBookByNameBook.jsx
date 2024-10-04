@@ -1,47 +1,61 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
-import { Spin, Card, Typography, message, Button, Modal, Dropdown, Menu, Input, Tooltip, Row, Drawer, Space, Col } from 'antd';
-import Cookies from 'js-cookie';
-import DetailBuy from './DetailBuy';
-import Login from '../common/Login';
-import { GiArmoredBoomerang } from 'react-icons/gi';
+import './home_index.module.css';
 import { FcHome } from 'react-icons/fc';
+import { Button, Drawer, Dropdown, Input, Menu, message, Modal, Tooltip, Typography } from 'antd';
+import Login from '../common/Login';
 import { CiLogin, CiSearch } from 'react-icons/ci';
+import { GiArmoredBoomerang } from 'react-icons/gi';
 import { AiOutlineShoppingCart } from 'react-icons/ai';
+import Cookies from 'js-cookie';  // Import js-cookie
+import axios from 'axios';
+import ListBookHome from './ListBookHome';
+import ProFile from '../user/Profile';
 import ListCart from '../user/ListCart';
-import { PiSortAscendingFill } from 'react-icons/pi';
-import CountryFilter from '../common/CountryFilter';
-import styles from './index_header.module.css';
 import { CgProfile } from 'react-icons/cg';
+import './index.module.css';
+
+import styles from './index_header.module.css';
 import FooterHeader from '../Utils/FooterHeader';
+import styleLayout from './layout.module.css';  // Import CSS module
+import DetailAuthorBook from './DetailAuthorBook';
+import ListAuthorBookButton from './ListAuthorBookSelect';
+import ListBookByPublicsher from './ListBookByPublicsher';
+import ListDetailBookWhenBuy from './ListDetailBookWhenBuy';
+import ChiTiettacGiaVaTheoSach from './ChiTiettacGiaVaTheoSach';
+import ManSubmirMuaHangTuGioHang from './ManSubmirMuaHangTuGioHang';
+import ListBlogCustomer from './ListBlogCustomer';
 import styleCart from './list_book_home.module.css';
 import CardProduct from './CardProduct';
-import ListBookHome from './ListBookHome';
+import GioiThieu from './GioiThieu';
+import ManlaySachKhiNhapTimKiem from './ManlaySachKhiNhapTimKiem';
+const { Title } = Typography;
 
 
-function GetListBookByNameBook({ nameTypeBook, nameBook }) {
-    const [books, setBooks] = useState([]); // Initialize as an empty array
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [likedBooks, setLikedBooks] = useState({});
-    const [selectedBookId, setSelectedBookId] = useState(null);  // Add state to manage selected book ID
+function GetListBookByNameBook() {
+    const [username, setUsername] = useState(null);
+    const [isModalVisible, setIsModalVisible] = useState(false);
     const [isNextBuy, setIsNextBuy] = useState(false);
     const [authors, setAuthors] = useState([]);
     const [isNext, setIsNext] = useState(false);
     const [selectedAuthor, setSelectedAuthor] = useState(null);
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [username, setUsername] = useState(null);
-    const [orderDesc, setOrderDesc] = useState('');
-    const [orderAsc, setOrderAsc] = useState('');
-    const [selectedSort, setSelectedSort] = useState(null); // Save the selected sort option
-    const [isDrawerVisibleCart, setIsDrawerVisibleCart] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [isNextProFile, setIsNextProFile] = useState(false);
+    const [books, setBooks] = useState([]);
+    const [isDrawerVisibleCart, setIsDrawerVisibleCart] = useState(false);
+    const [nameBook, setNameBook] = useState('');  // Quản lý state cho input
     const [isNextFindBook, setIsNextFindBook] = useState(false);
+    const [isNextAuthorBook, setIsNextAuthorBook] = useState(false);
+    const [nameAuthorBook, setNameAuthorBook] = useState(null);
+    const [isNextCart, setIsNextCart] = useState(false);
+    const [nextListBookByAuthor, setNextListBookByAuthor] = useState(false);
+    const [nextListBookByPublicSher, setNextListBookByPublicSher] = useState(false);
+    const [nextBlog, setNextBlog] = useState(false);
+    const [gioiThieu, setGioiThieu] = useState(false);
+
     const cartRef = useRef(null);
 
     const openDrawerCart = () => {
         setIsDrawerVisibleCart(true);
-        // Optional: Reload the cart data when the drawer opens
         if (cartRef.current) {
             cartRef.current.reloadCart();
         }
@@ -50,108 +64,36 @@ function GetListBookByNameBook({ nameTypeBook, nameBook }) {
     const closeDrawerCart = () => {
         setIsDrawerVisibleCart(false);
     };
-    const handleCountryFilterChange = (selectedCountries) => {
-        // Update your book list based on the selected countries
-        // This might involve calling your API with the new filter
-        console.log('Selected countries:', selectedCountries);
-    };
-    // Hàm sleep sử dụng Promise để trì hoãn
-    const sleep = (ms) => {
-        return new Promise((resolve) => setTimeout(resolve, ms));
-    };
-
-    const fetchBooks = async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            // Construct query params based on the active sort order
-            const params = new URLSearchParams();
-            params.append('name', nameTypeBook);
-            if (orderDesc) {
-                params.append('desc', orderDesc);
-            }
-            if (orderAsc) {
-                params.append('asc', orderAsc);
-            }
-
-            // Thêm sleep trước khi lấy book_name từ localStorage (ví dụ 500ms)
-            await sleep(500);
-
-            const name_book = localStorage.getItem('book_name') || '';
-            console.log(`Book name fetched from localStorage: ${name_book}`);
-
-            const response = await axios.get(`http://127.0.0.1:8080/manager/book/list/filter?name=${name_book}`);
-            if (response.data.code === 0) {
-                setBooks(response.data.body || []);
-            } else {
-                message.error('Failed to fetch books');
-            }
-        } catch (err) {
-            setError('Error fetching books');
-            message.error('Error fetching books');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-
     useEffect(() => {
-        // Check for the username in local storage
         const storedUsername = localStorage.getItem('userData');
         if (storedUsername) {
             setUsername(storedUsername);
         }
     }, []);
-    // Load liked books from cookies
-    const loadLikedBooks = () => {
-        const liked = Cookies.get('likedBooks');
-        if (liked) {
-            setLikedBooks(JSON.parse(liked));
-        }
+
+    const handleLoginClick = () => {
+        setIsModalVisible(true);
     };
+
     const handleLogoutClick = () => {
-        // Clear the username from local storage
-        localStorage.removeItem('username');
+        localStorage.removeItem('userData');
         setUsername(null);
-    };
-    const handleModalClose = () => {
-        setIsModalVisible(false);
     };
     const handleNextProFile = () => {
         setIsNextProFile(true);
     };
-    // Toggle like status for a book
-    const toggleLike = (bookId) => {
-        setLikedBooks((prevLikedBooks) => {
-            const updatedLikedBooks = {
-                ...prevLikedBooks,
-                [bookId]: !prevLikedBooks[bookId],
-            };
-            // Save updated liked books to cookies
-            Cookies.set('likedBooks', JSON.stringify(updatedLikedBooks), { expires: 7 });
-            return updatedLikedBooks;
-        });
+    const handleModalClose = () => {
+        setIsModalVisible(false);
     };
-
-    // Fetch books and load liked books when the component mounts or nameTypeBook changes
-    useEffect(() => {
-        fetchBooks();
-        loadLikedBooks();
-    }, [nameTypeBook]);
-
-    function truncateText(text, maxLength) {
-        if (text.length > maxLength) {
-            return text.substring(0, maxLength) + '...';
-        }
-        return text;
+    const handlerNextCart = () => {
+        setIsNextCart(true);
     }
-    const handleLoginClick = () => {
-        setIsModalVisible(true);
-    };
+
     const fetchAuthors = async () => {
         setLoading(true);
         try {
             const response = await axios.get('http://127.0.0.1:8080/manager/type_book/list');
+            console.log('Response data:', response.data);
             if (response.data.code === 0) {
                 setAuthors(response.data.body);
             } else {
@@ -165,48 +107,21 @@ function GetListBookByNameBook({ nameTypeBook, nameBook }) {
         }
     };
 
+
+
     useEffect(() => {
         fetchAuthors();
     }, []);
+
 
     const handleMenuClick = (e) => {
         const selectedAuthor = authors.find(author => author.id === parseInt(e.key, 10));
         if (selectedAuthor) {
             setSelectedAuthor(selectedAuthor);
+            localStorage.setItem('typebook', selectedAuthor.name);
             setIsNext(true);
         }
     };
-
-    const handleOrderDesc = () => {
-        setOrderDesc('1');
-        setOrderAsc('');
-        fetchBooks();
-        setSelectedSort('1')
-
-    }
-    const handleOrderAsc = () => {
-        setOrderAsc('2');
-        setOrderDesc('');
-        fetchBooks();
-        setSelectedSort('2')
-    }
-
-    if (loading) {
-        return <Spin tip="Loading books..." />;
-    }
-
-    if (error) {
-        return <Typography.Text type="danger">{error}</Typography.Text>;
-    }
-
-
-    if (isNext && selectedAuthor) {
-        return <ListBookHome nameTypeBook={selectedAuthor.name} />;
-    }
-
-    if (isNextFindBook) {
-        return <GetListBookByNameBook />
-    }
 
     const menu = (
         <Menu onClick={handleMenuClick}>
@@ -217,18 +132,68 @@ function GetListBookByNameBook({ nameTypeBook, nameBook }) {
             ))}
         </Menu>
     );
-    if (books.length === 0) {
+    const handleSearch = () => {
+        localStorage.setItem('book_name', nameBook);
+        setIsNextFindBook(true);
+    };
 
-        return <div>
-            <Typography.Text>loading .....</Typography.Text>;
-        </div>
+    const handleAuthorNameChange = (name) => {
+        setIsNextAuthorBook(true);
+    };
+
+    const handleItemClick = () => {
+        setIsNextAuthorBook(true);
+    };
+
+    if (isNext && selectedAuthor) {
+        return <ListBookHome nameTypeBook={selectedAuthor.name} />;
     }
+
+
     if (isNextBuy) {
-        return <DetailBuy book_id={selectedBookId} />;
+        return <ListDetailBookWhenBuy />
+    }
+
+    if (isNextProFile) {
+        return <ProFile />
+    }
+
+    if (isNextFindBook) {
+        return <GetListBookByNameBook nameBook={''} />
+    }
+
+    if (isNextAuthorBook) {
+        return <ChiTiettacGiaVaTheoSach />
+    }
+
+    if (nextListBookByAuthor) {
+        return <ChiTiettacGiaVaTheoSach />
+    }
+
+    if (nextListBookByPublicSher) {
+        return <ListBookByPublicsher />;
+    }
+
+    if (isNextCart) {
+        return (
+            <ManSubmirMuaHangTuGioHang />
+        )
+    }
+
+    if (nextBlog) {
+        return (
+            <ListBlogCustomer />
+        )
+    }
+
+    if (gioiThieu) {
+        return (
+            <GioiThieu />
+        )
     }
 
     return (
-        <div className={styleCart['container']}>
+        <div className={styleLayout.layoutHome}>
 
             <div className={styles.layoutHeader}>
                 <div className={styles.layoutHeaderStart}>
@@ -242,27 +207,47 @@ function GetListBookByNameBook({ nameTypeBook, nameBook }) {
                         <li onClick={() => window.location.reload()}>
                             <FcHome />Trang chủ
                         </li>
-                        <li>Tin sách</li>
                         <li>
-                            {loading ? (
-                                <Spin tip="Loading authors..." />
+
+                            <Dropdown overlay={menu} trigger={['click']}>
+                                <Button
+
+
+                                    style={{
+                                        border: 'none',
+                                        background: 'none',
+                                        boxShadow: 'none',
+                                        padding: 0,
+                                        color: '#1890ff',
+                                        cursor: 'pointer',
+                                        fontSize: '17px',
+                                        color: 'black'
+                                    }}
+                                >
+                                    Thư viện sách
+                                </Button>
+                            </Dropdown>
+                        </li>
+                        <li>
+                            {isNextAuthorBook && nameAuthorBook ? (
+                                <DetailAuthorBook authorBooName={nameAuthorBook} />
                             ) : (
-                                <Dropdown overlay={menu} trigger={['click']}>
-                                    <Button style={{ border: 'none', marginTop: '-10px' }}>
-                                        Thư viện sách
-                                    </Button>
-                                </Dropdown>
+                                <ListAuthorBookButton
+                                    onAuthorNameChange={handleAuthorNameChange}
+                                    onEventClick={handleItemClick}
+                                />
                             )}
                         </li>
-                        <li>Tác giả</li>
-                        <li>Cuộc thi</li>
-                        <li>Thông tin cửa hàng</li>
+                        <li onClick={() => setNextBlog(true)}>Blog</li>
+                        <li onClick={() => setGioiThieu(true)}>Giới thiệu</li>
                         <li className={styles.searchContainer}>
                             <Input
                                 placeholder='Tìm kiếm ...'
                                 className={styles.searchInput}
+                                value={nameBook}
+                                onChange={(e) => setNameBook(e.target.value)}
                             />
-                            <Button className={styles.searchButton}>
+                            <Button onClick={handleSearch} className={styles.searchButton}>
                                 <CiSearch className="icon" />
                             </Button>
                         </li>
@@ -300,7 +285,7 @@ function GetListBookByNameBook({ nameTypeBook, nameBook }) {
                                         visible={isDrawerVisibleCart}
                                         width={800}
                                     >
-                                        <ListCart ref={cartRef} />
+                                        <ListCart ref={cartRef} onEventClick={handlerNextCart} />
                                     </Drawer>
                                 </Tooltip>
                             )}
@@ -309,70 +294,15 @@ function GetListBookByNameBook({ nameTypeBook, nameBook }) {
                 </div>
             </div>
 
-
-            <div className={styleCart['col-books']}>
-                <div className={styleCart['list-check-box']}>
-        
-                </div>
-
-                <div>
-
-                    <div style={{ width: '800px', justifyContent: 'end' }} className={styleCart['order-monoi']}>
-                        <Space>
-                            <div className={styleCart['sort-text']}>
-                                <PiSortAscendingFill className={styleCart['sort-icon']} />
-                                Sắp xếp theo
-                            </div>
-                            <Button
-                                type={selectedSort === '1' ? 'primary' : 'default'}
-                                onClick={handleOrderDesc}
-                                className={styleCart['sort-button']}
-                            >
-                                Giá thấp đến cao
-                            </Button>
-                            <Button
-                                type={selectedSort === '2' ? 'primary' : 'default'}
-                                onClick={handleOrderAsc}
-                                className={styleCart['sort-button']}
-                            >
-                                Giá cao đến thấp
-                            </Button>
-                            <div>
-                                <Space>
-                                    <Input />
-                                    <Input />
-                                </Space>
-                            </div>
-                        </Space>
-                    </div>
-
-
-                    <div className={styleCart['books-container']}>
-                        {books.map((item) => (
-                            <div key={item.book} className={styleCart['book-card']}>
-                                <CardProduct
-                                    bookId={item.id}
-                                    author_name={item.author_name}
-                                    discount_price={item.discount_price}
-                                    price={item.price}
-                                    publisher={item.publisher}
-                                    title={item.title}
-                                />
-                            </div>
-                        ))}
-                    </div>
-
-                </div>
-
-
-
+            <div style={{marginTop:'50px'}}>
+                <ManlaySachKhiNhapTimKiem />
             </div>
 
-            <div className={styleCart['footer']}>
+            <div style={{ marginTop: '19px' }} className="layout-footer">
                 <FooterHeader />
             </div>
-        </div>
 
+        </div>
     );
 }
 
