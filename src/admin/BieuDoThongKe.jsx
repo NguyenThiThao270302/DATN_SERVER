@@ -2,6 +2,7 @@ import { Button, DatePicker, message, Space } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import StatisticalFormHeader from "./StatisticalFormHeader";
 const { RangePicker } = DatePicker;
 
 function BieuDoLineChart() {
@@ -69,33 +70,37 @@ function BieuDoLineChart() {
     }, []);
 
     return (
-        <div style={{ width: '100%', height: '300px' }}>
-            <Space>
-                <h2>Thống kê theo khoảng thời gian</h2>
-                <RangePicker onChange={handleDateRangeChange} />
-                <Button onClick={handleFilter}>Thống kê</Button>
-            </Space>
+        <div>
+            <StatisticalFormHeader/>
+            <div style={{ width: '100%', height: '400px',marginBottom:'90px' }}>
+                <Space>
+                    <h2>Thống kê theo khoảng thời gian</h2>
+                    <RangePicker onChange={handleDateRangeChange} />
+                    <Button onClick={handleFilter}>Thống kê</Button>
+                </Space>
 
-            <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                    data={filteredData}
-                    margin={{
-                        top: 5,
-                        right: 30,
-                        left: 20,
-                        bottom: 5,
-                    }}
-                >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="completed" stroke="#8884d8" activeDot={{ r: 8 }} name="Đơn hàng đã hoàn thành" />
-                    <Line type="monotone" dataKey="processing" stroke="#82ca9d" name="Đơn hàng đang chờ xử lý" />
-                </LineChart>
-            </ResponsiveContainer>
+                <ResponsiveContainer width="100%" height="100%">
+                    <LineChart
+                        data={filteredData}
+                        margin={{
+                            top: 5,
+                            right: 30,
+                            left: 20,
+                            bottom: 5,
+                        }}
+                    >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="date" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Line type="monotone" dataKey="completed" stroke="#8884d8" activeDot={{ r: 8 }} name="Đơn hàng đã hoàn thành" />
+                        <Line type="monotone" dataKey="processing" stroke="#82ca9d" name="Đơn hàng đang chờ xử lý" />
+                    </LineChart>
+                </ResponsiveContainer>
+            </div>
         </div>
+
     );
 }
 

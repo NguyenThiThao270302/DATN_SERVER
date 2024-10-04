@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Spin, Alert, Form, Button, notification, message } from 'antd'; // Import Button from Ant Design
+import { Form, Button, notification, message } from 'antd'; // Import Button from Ant Design
 import ProductCard from '../user/ProductCard';
 import { RiSecurePaymentLine } from 'react-icons/ri';
-import { Link } from 'lucide-react';
 
 const GetOrderById = () => {
     const [listBookJson, setListBookJson] = useState([]);
@@ -122,7 +121,6 @@ const GetOrderById = () => {
                 localStorage.setItem('listbook', JSON.stringify([]));
                 message.success("Bạn sẽ được chuyển về trang chủ trong giây lát")
                 openNotification('topRight', 'Đặt hàng thành công', 'Bạn sẽ được chuyển về trang chủ trong giây lát.');
-                // Delay for 0.5 seconds before redirecting to the homepage
                 setTimeout(() => {
                     window.location.href = '/homePage';
                 }, 2000); // 500 milliseconds delay
@@ -133,14 +131,14 @@ const GetOrderById = () => {
             console.error('Có lỗi xảy ra khi thanh toán:', error);
             openNotification('topRight', 'Lỗi', 'Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại.');
         } finally {
-            setButtonLoading(false); // Set loading state to false after completion
+            setButtonLoading(false);
         }
     };
 
 
     return (
         <div>
-            {contextHolder} {/* Render the notification context */}
+            {contextHolder}
 
             <div>
                 <Form className="form-cart">
@@ -158,7 +156,8 @@ const GetOrderById = () => {
                         ))}
                     </Form.Item>
                     <Form.Item>
-                        <a href="" target="_blank">Thêm sản phẩm</a>
+                        <a href="" onClick={()=>{window.location.reload()}}>Thêm sản phẩm</a
+                        >
                     </Form.Item>
                     <Form.Item>
                         <div className="form-item-total">
@@ -192,7 +191,7 @@ const GetOrderById = () => {
                             onClick={handlePaymentOnline}
                             type="primary"
                             className="form-button"
-                            loading={buttonLoading} // Add the loading prop
+                            loading={buttonLoading}
                         >
                             Mua ngay <RiSecurePaymentLine />
                         </Button>

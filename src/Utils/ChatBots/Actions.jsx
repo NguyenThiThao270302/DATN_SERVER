@@ -9,7 +9,7 @@ class ActionProvider {
 
   handleDefault() {
     const botMessage = this.createChatBotMessage(
-      'muốn hỏi gì nói nhanh'
+      'xin lỗi , tôi ko hiểu câu hỏi cảu bạn xin vui lòng nhập lại'
     );
     this.updateChatbotState(botMessage);
   }
@@ -44,7 +44,7 @@ class ActionProvider {
         const orders = response.data.body;
 
         const filteredOrders = orders.filter(order => {
-          const statusFilter = [11, 13, 17, 19, 21]; // Define the statuses you want to include
+          const statusFilter = [11, 13, 17, 19, 21];
           return statusFilter.includes(order.status);
         });
 
@@ -64,21 +64,16 @@ class ActionProvider {
 
             return this.createChatBotMessage(`Bạn có đơn hàng mã ${orderId}. ✅ Trạng thái: ${status}.`);
           });
-
-          // Update chatbot with each filtered order message
           botMessages.forEach(botMessage => this.updateChatbotState(botMessage));
         } else {
-          // No orders found with the specified statuses
           const botMessage = this.createChatBotMessage('Không tìm thấy đơn hàng phù hợp với trạng thái.');
           this.updateChatbotState(botMessage);
         }
       } else {
-        // No order information found
         const botMessage = this.createChatBotMessage('Không tìm thấy đơn hàng của bạn.');
         this.updateChatbotState(botMessage);
       }
     } catch (error) {
-      // Handle errors during the API call
       console.error('Error during API call:', error);
       const botMessage = this.createChatBotMessage('Có lỗi xảy ra khi kiểm tra đơn hàng của bạn.');
       this.updateChatbotState(botMessage);
@@ -87,7 +82,6 @@ class ActionProvider {
 
   async handleSearch(message) {
     try {
-      // Gửi yêu cầu POST sử dụng axios
       const response = await axios.post('http://127.0.0.1:8080/manager/transport/pull', {
         content: message,
       }, {
@@ -96,12 +90,10 @@ class ActionProvider {
         },
       });
 
-      // Kiểm tra phản hồi từ API
       if (response.data && response.data.body && response.data.body.length > 0) {
         const botMessages = response.data.body.map((item) => {
           const { index } = item;
 
-          // Xử lý theo từng loại index
           let botMessageText = '';
           switch (index) {
             case 1:
@@ -145,15 +137,12 @@ class ActionProvider {
           return this.createChatBotMessage(botMessageText);
         });
 
-        // Cập nhật chatbot với từng thông điệp
         botMessages.forEach((botMessage) => this.updateChatbotState(botMessage));
       } else {
-        // Không có thông tin hợp lệ trong phản hồi
         const botMessage = this.createChatBotMessage('Không thể tìm thấy thông tin.');
         this.updateChatbotState(botMessage);
       }
     } catch (error) {
-      // Xử lý lỗi khi gọi API
       console.error('Error during API call:', error);
       const botMessage = this.createChatBotMessage('Có lỗi xảy ra khi xử lý yêu cầu của bạn.');
       this.updateChatbotState(botMessage);
