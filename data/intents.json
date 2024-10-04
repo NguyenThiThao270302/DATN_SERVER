@@ -1,11 +1,11 @@
 {
   "book_search": [
     {
-      "question": "Tôi muốn tìm sách của \"tên tác giả\". Bạn có cuốn nào không?",
+      "question": "Tôi muốn tìm sách của [tên tác giả]. Bạn có cuốn nào không?",
       "intent": "search_author_books"
     },
     {
-      "question": "Bạn có thể giới thiệu sách thuộc thể loại \"tên thể loại\" không?",
+      "question": "Bạn có thể giới thiệu sách thuộc thể loại [tên thể loại] không?",
       "intent": "recommend_genre_books"
     },
     {
@@ -19,19 +19,15 @@
   ],
   "product_info": [
     {
-      "question": "Cuốn sách \"tên sách\" còn hàng không?",
+      "question": "Cuốn sách [tên sách] còn hàng không?",
       "intent": "check_book_availability"
     },
     {
-      "question": "Giá của cuốn \"tên sách\" là bao nhiêu?",
+      "question": "Giá của cuốn [tên sách] là bao nhiêu?",
       "intent": "get_book_price"
     },
     {
-      "question": "Sách \"tên sách\" có bản e-book không?",
-      "intent": "check_ebook_availability"
-    },
-    {
-      "question": "Tác giả của cuốn \"tên sách\" là ai?",
+      "question": "Tác giả của cuốn [tên sách] là ai?",
       "intent": "get_book_author"
     }
   ],
@@ -49,55 +45,11 @@
       "intent": "cancel_order"
     }
   ],
-  "order_support": [
-    {
-      "question": "Làm sao để thêm sách vào giỏ hàng?",
-      "intent": "add_book_to_cart"
-    },
-    {
-      "question": "Cách thanh toán trên website như thế nào?",
-      "intent": "payment_process"
-    },
-    {
-      "question": "Bạn có hỗ trợ thanh toán qua VNPay/MoMo không?",
-      "intent": "payment_methods_support"
-    }
-  ],
-  "account_management": [
-    {
-      "question": "Làm sao để đăng ký tài khoản?",
-      "intent": "register_account"
-    },
-    {
-      "question": "Làm sao để xem lịch sử mua hàng của tôi?",
-      "intent": "view_purchase_history"
-    },
-    {
-      "question": "Làm sao để đổi mật khẩu?",
-      "intent": "change_password"
-    }
-  ],
-  "promotions": [
-    {
-      "question": "Có chương trình khuyến mãi nào đang diễn ra không?",
-      "intent": "current_promotions"
-    },
-    {
-      "question": "Tôi có thể sử dụng mã giảm giá như thế nào?",
-      "intent": "discount_code_usage"
-    }
-  ],
-  "personalized_advice": [
-    {
-      "question": "Bạn có thể gợi ý sách cho người yêu thích thể loại \"tên thể loại\" không?",
-      "intent": "suggest_books_by_genre"
-    },
-    {
-      "question": "Mình muốn tìm sách phù hợp với trẻ em, bạn có gợi ý gì không?",
-      "intent": "suggest_books_for_children"
-    }
-  ],
   "store_info": [
+    {
+      "question": "Vị trí của cửa hàng?",
+      "intent": "store_location"
+    },
     {
       "question": "Giờ làm việc của cửa hàng là khi nào?",
       "intent": "store_working_hours"
@@ -105,10 +57,16 @@
     {
       "question": "Cửa hàng có ship sách toàn quốc không?",
       "intent": "shipping_policy"
+    }
+  ],
+  "promotions": [
+    {
+      "question": "Có sách nào giảm giá không?",
+      "intent": "discounted_books"
     },
     {
-      "question": "tôi muốn mua cuốn sách [ABCXY] gửi về địa chỉ [Hà Nội Bắc Từ Liêm Nguyên Xá] , địa chỉ [email hhhhh@hmail.com] số điện thoại : [098143601] \n",
-      "intent": "shipping_policy"
+      "question": "Sách nào đang bán chạy nhất?",
+      "intent": "best_selling_books"
     }
   ]
 }

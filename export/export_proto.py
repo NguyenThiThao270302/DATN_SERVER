@@ -7,7 +7,9 @@ from nltk.stem import WordNetLemmatizer
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import load_model
-
+# Service gRPC
+import protos.pb_pb2 as pb__pb2
+import protos.pb_pb2_grpc as pb_pb2_grpc
 # Load các thành phần của chatbot
 nltk.download('punkt')
 nltk.download('wordnet')
@@ -89,11 +91,6 @@ def get_response(intents_list, intents_json):
                 result = np.random.choice(i.get('responses', ["Xin lỗi, tôi không thể trả lời câu hỏi này."]))
                 return result
     return "Xin lỗi, tôi không thể trả lời câu hỏi này."
-
-
-# Service gRPC
-import protos.pb_pb2 as pb__pb2
-import protos.pb_pb2_grpc as pb_pb2_grpc
 
 
 class AIService(pb_pb2_grpc.AIServiceServicer):
