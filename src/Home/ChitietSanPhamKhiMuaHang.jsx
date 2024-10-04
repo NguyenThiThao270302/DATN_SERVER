@@ -120,8 +120,11 @@ const ChitietSanPhamKhiMuaHang = ({ book_id, onEventClick }) => {
 
     const handleNextSubmitBuy = () => {
         setIsBuy(true);
-        initOrder();//
+        initOrder();
         if (onEventClick) onEventClick();
+        if (localStorage.getItem('userData') === null){
+            message.error('Vui lòng đăng nhập');
+        }
     }
 
 

@@ -153,7 +153,7 @@ class ActionProvider {
     message.success('Tôi sẽ điều hướng đến trang thanh toán ngay vui lòng chờ')
     const orderData = localStorage.getItem('listBookBuyWhenChatBot');
     const orderDetails = JSON.parse(orderData);
-    const addressId = localStorage.getItem('delivery_address' || 0);
+    const addressId = parseInt(localStorage.getItem('delivery_address') || '0', 10);
     let data = JSON.stringify({
       "name_book": orderDetails.name_book,
       "quantity": orderDetails.quantity,
@@ -182,7 +182,7 @@ class ActionProvider {
     message.success('Đơn hàng của bạn tạo thành công')
     const orderData = localStorage.getItem('listBookBuyWhenChatBot');
     const orderDetails = JSON.parse(orderData);
-    const addressId = localStorage.getItem('delivery_address' || 0);
+    const addressId = parseInt(localStorage.getItem('delivery_address') || '0', 10);
     let data = JSON.stringify({
       "name_book": orderDetails.name_book,
       "quantity": orderDetails.quantity,
