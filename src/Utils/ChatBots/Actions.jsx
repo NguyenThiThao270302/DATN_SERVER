@@ -9,7 +9,7 @@ class ActionProvider {
 
   handleDefault() {
     const botMessage = this.createChatBotMessage(
-      'xin lỗi , tôi ko hiểu câu hỏi cảu bạn xin vui lòng nhập lại'
+      'xin lỗi , tôi ko hiểu câu hỏi câu bạn xin vui lòng nhập lại'
     );
     this.updateChatbotState(botMessage);
   }
@@ -220,7 +220,7 @@ class ActionProvider {
 
       if (response.data.code === 0) {
         const books = response.data.body;
-        let botMessageContent = "Danh sách sách bán chạy:\n";
+        let botMessageContent = "sách sách bán chạy:\n";
 
         books.forEach((book) => {
           botMessageContent += `- Tên sách: ${book.name_book}, Giá: ${book.price}, Tác giả: ${book.authort_book}\n`;
@@ -235,6 +235,54 @@ class ActionProvider {
       message.error('Lỗi kết nối, vui lòng thử lại');
     }
   }
+
+  async sachGiamGia() {
+    try {
+      const response = await axios.get('http://127.0.0.1:8080/manager/book/list/giamgia');
+
+      if (response.data.code === 0) {
+        const books = response.data.body;
+
+        let botMessageContent = "Sách giảm giá:\n";
+
+        books.forEach(book => {
+          botMessageContent += `- ${book.title} của ${book.author_name}\n`;
+          botMessageContent += `  Giá gốc: ${book.price} VNĐ - Giá giảm: ${book.discount_price} VNĐ\n`;
+          botMessageContent += `  Nhà xuất bản: ${book.publisher}\n\n`;
+        });
+
+        const botMessage = this.createChatBotMessage(botMessageContent);
+        this.updateChatbotState(botMessage);
+      } else {
+        message.error('Lỗi kết nối, vui lòng thử lại');
+      }
+    } catch (error) {
+      message.error('Lỗi kết nối, vui lòng thử lại');
+    }
+  }
+
+  viTriCuahang() {
+    const botMessageContent = "Cửa hàng của chúng tôi nằm tại địa chỉ: Hồng An Hưng Hà Thái Bình";
+    
+    const botMessage = this.createChatBotMessage(botMessageContent);
+    
+    this.updateChatbotState(botMessage);
+  }
+
+  thoiGianHienTai() {
+    const now = new Date();
+    
+    const time = now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    
+    const date = now.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  
+    const botMessageContent = `Thời gian hiện tại là: ${time} ngày ${date}.`;
+  
+    const botMessage = this.createChatBotMessage(botMessageContent);
+    
+    this.updateChatbotState(botMessage);
+  }
+  
 
   updateChatbotState(message) {
     this.setState((prevState) => ({

@@ -87,8 +87,8 @@ const ListOrderUser = () => {
       const response = await axios.patch(`http://127.0.0.1:8080/manager/order/api/update/calcel?id=${id}`);
       if (response.data.code === 0) {
         message.success('Đơn hàng đã được hủy thành công');
-        updateOrderStatus(id, 11); // Updating status to 11 (canceled)
-        handleModalClose(); // Close modal if it's open
+        updateOrderStatus(id, 11)
+        handleModalClose();
       } else {
         message.error('Không thể hủy đơn hàng');
       }
@@ -151,11 +151,11 @@ const ListOrderUser = () => {
       key: 'status',
       render: status => {
         const statusLabels = {
-          21: 'Đang Chờ Thanh Toán Online',
-          19: 'Đang Chờ Gửi Hàng',
-          23: 'Đang Giao',
-          11: 'Đơn Hàng Đã Hủy',
-          9: 'Đã Giao Hàng và Thanh Toán',
+          23: 'Đơn hàng đã giao và hoàn tất',
+          21: 'Đang giao hàng',
+          19: 'Đang chờ vận chuyển',
+          17: 'Đang chuẩn bị đơn hàng',
+          11: 'Đang chờ xác nhận',
         };
         return statusLabels[status] || 'Trạng Thái Không Xác Định';
       },

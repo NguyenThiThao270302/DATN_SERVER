@@ -43,8 +43,22 @@ class MessageParser {
             lowerCaseMessage.includes('sách bán chạy')
         ) {
             this.actionProvider.sachBanChay();
-        } else {
-            this.actionProvider.handleSearch(message);  // Pass the original message
+        } else if(
+            lowerCaseMessage.includes('có sách nào giảm giá không')
+        ){
+            this.actionProvider.sachGiamGia();
+        } else if(
+            lowerCaseMessage.includes('cửa hàng') ||
+            lowerCaseMessage.includes('vị trí') ||
+            lowerCaseMessage.includes('vị trí cửa hàng')
+        ) {
+            this.actionProvider.viTriCuahang();
+        } else if(
+            lowerCaseMessage.includes('mấy giờ')
+        ){
+            this.actionProvider.thoiGianHienTai()
+        }else {
+            this.actionProvider.handleSearch(message);
         }
     }
 }
