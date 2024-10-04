@@ -21,4 +21,13 @@ export default App;
   //"content": 		"tôi muốn mua cuốn sách ABCXY số lượng 2 gửi về địa chỉ Hà Nội Bắc Từ Liêm Nguyên Xá , địa chỉ email hhhhh@hmail.com số điện thoại 098143601"
   
     //"content": 	"Loại sách văn học cổ điển rất hấp dẫn" 
-  
+    //sách bán chạy
+
+    //có sách nào giảm giá không
+
+    //cửa hàng
+    //vị trí
+    //mấy giờ
+    //cửa hàng giao hàng toàn quốc không
+    //đơn hàng nào đang giao
+    //đơn hàng của tôi
