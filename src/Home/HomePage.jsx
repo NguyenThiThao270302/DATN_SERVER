@@ -171,12 +171,12 @@ function HomePage() {
         setIsNextAuthorBook(true);
     };
 
-    if (isNext && selectedAuthor) {
+    if (isNext && selectedAuthor) {// thu vien sach
         return <ListBookHome nameTypeBook={selectedAuthor.name} />;
     }
 
 
-    if (isNextBuy) {
+    if (isNextBuy) {//chi tiet sach
         return <ListDetailBookWhenBuy />
     }
 
@@ -184,7 +184,7 @@ function HomePage() {
         return <ProFile />
     }
 
-    if (isNextFindBook) {
+    if (isNextFindBook) {//tim kiem sach
         return <GetListBookByNameBook nameBook={''} />
     }
 

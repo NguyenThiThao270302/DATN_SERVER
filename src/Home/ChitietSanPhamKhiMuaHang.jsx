@@ -1,36 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { Button, Carousel, Col, Drawer, Dropdown, Image, Input, Menu, message, Modal, Rate, Row, Space, Spin, Tooltip, Typography } from 'antd';
+import { Button, Col, message, Row, Space, Spin } from 'antd';
 import './home_index.module.css';
-import { MinusOutlined, PlusOutlined, QuestionOutlined } from '@ant-design/icons';
-
+import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import SubmitBuyBook from './SubmitBuyBook';
 import { addToCart } from '../user/Carts';
-import styles from './index_header.module.css';
-import { CiLogin, CiSearch } from 'react-icons/ci';
-import { GiArmoredBoomerang } from 'react-icons/gi';
-import { AiOutlineShoppingCart } from 'react-icons/ai';
-import ListCart from '../user/ListCart';
-import { FcHome } from 'react-icons/fc';
-import { CgProfile } from 'react-icons/cg';
-import Login from '../common/Login';
-import Footer from '../Utils/Footer';
-import Slider from "react-slick";
 import styleDetail from './detail_buy.module.css';
-import ButtonGroup from 'antd/es/button/button-group';
-import { BsFileMinus } from 'react-icons/bs';
-import BookWellSell from './BookWellSell';
 import { TiArrowBackOutline } from 'react-icons/ti';
-import HomePage from './HomePage';
 import BookCarousel from './BookCarousel';
-const { Title, Text, Paragraph } = Typography;
-const contentStyle = {
-    height: '360px',
-    color: '#fff',
-    lineHeight: '360px',
-    textAlign: 'center',
-    background: '#364d79',
-};
+
+
 //màn đì têu book
 const ChitietSanPhamKhiMuaHang = ({ book_id, onEventClick }) => {
 
@@ -130,32 +109,34 @@ const ChitietSanPhamKhiMuaHang = ({ book_id, onEventClick }) => {
 
     const initOrder = async () => {
         try {
-            // Fetch existing books from local storage
             const existingBooksJSON = localStorage.getItem('listbook');
             let existingBooks = existingBooksJSON ? JSON.parse(existingBooksJSON) : [];
-
-            // Update the quantity of the current book
-            book.quantity = count;
-
-            // Check if the book already exists in the list
-            const bookIndex = existingBooks.findIndex(b => b.id === book.id);
-
+    
+            const discountedPrice = book.price - book.price * (book.discount_price / 100);
+    
+            const updatedBook = {
+                ...book,
+                quantity: count,
+                price: discountedPrice
+            };
+    
+            const bookIndex = existingBooks.findIndex(b => b.id === updatedBook.id);
+    
             if (bookIndex > -1) {
-                // If book exists, update it
-                existingBooks[bookIndex] = book;
+                existingBooks[bookIndex] = updatedBook;
             } else {
-                // If book does not exist, add it
-                existingBooks.push(book);
+                existingBooks.push(updatedBook);
             }
-
-            // Save the updated list back to local storage
+    
             localStorage.setItem('listbook', JSON.stringify(existingBooks));
         } catch (error) {
             console.error('Error updating book list in local storage:', error);
         }
     };
 
-
+    const formatPrice = (price) => {
+        return new Intl.NumberFormat('vi-VN').format(price);
+    };
 
     if (isBuy) {
         return (
@@ -171,6 +152,7 @@ const ChitietSanPhamKhiMuaHang = ({ book_id, onEventClick }) => {
 
 
         <div className={styleDetail.body}>
+            
             <Row>
                 <Col xs={6} sm={6} md={6} lg={6} xl={6} className={styleDetail['col-container']}>
                     {/* Viền */}
@@ -227,8 +209,7 @@ const ChitietSanPhamKhiMuaHang = ({ book_id, onEventClick }) => {
                                     fontSize: '30px',
 
                                 }}>
-                                    {book.price - book.price * (book.discount_price / 100)}đ
-
+                                    {formatPrice(book.price - book.price * (book.discount_price / 100))}₫
                                 </span>
                                 <span style={{
                                     color: 'gray',
@@ -237,7 +218,7 @@ const ChitietSanPhamKhiMuaHang = ({ book_id, onEventClick }) => {
                                     textDecoration: 'line-through',
 
                                 }}>
-                                    {book.price}đ
+                                    {formatPrice(book.price)}đ
                                 </span>
                                 {book.discount_price && (
                                     <span style={{
@@ -256,8 +237,8 @@ const ChitietSanPhamKhiMuaHang = ({ book_id, onEventClick }) => {
                                 fontSize: '18px',
                                 display: 'flex',
                                 alignItems: 'center',
-                                border: '1px solid lightgray', // Border around the quantity selector
-                                borderRadius: '10px', // Rounded corners for the quantity selector
+                                border: '1px solid lightgray',
+                                borderRadius: '10px',
                                 padding: '10px',
                             }}>
                                 <Space>
@@ -266,7 +247,7 @@ const ChitietSanPhamKhiMuaHang = ({ book_id, onEventClick }) => {
                                             background: 'white',
                                             border: '1px solid gray',
                                             padding: '5px 10px',
-                                            borderRadius: '5px' // Button rounded corners 
+                                            borderRadius: '5px'
                                         }}
                                         onClick={() => setCount(count - 1)}
                                         disabled={count === 1}
@@ -308,10 +289,10 @@ const ChitietSanPhamKhiMuaHang = ({ book_id, onEventClick }) => {
                                             fontSize: '16px',
                                             borderRadius: '10px',
                                             boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                                            backgroundColor: 'white', // Background color for "Mua ngay"
-                                            color: 'green', // Text color for "Mua ngay"
-                                            border: 'none', // Remove border for primary button
-                                            width: '200px', // Increase width to be twice as wide
+                                            backgroundColor: 'white', 
+                                            color: 'green',
+                                            border: 'none',
+                                            width: '200px', 
                                             height: '50px',
                                             border: '1px solid green',
                                             fontWeight: 'bold'
@@ -328,10 +309,10 @@ const ChitietSanPhamKhiMuaHang = ({ book_id, onEventClick }) => {
                                             fontSize: '16px',
                                             borderRadius: '10px',
                                             boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                                            color: 'white', // Text color for "Thêm vào giỏ hàng"
-                                            border: '2px solid #007BFF', // Border color for "Thêm vào giỏ hàng"
-                                            backgroundColor: 'green', // Background color for "Thêm vào giỏ hàng"
-                                            width: '200px', // Increase width to be twice as wide
+                                            color: 'white',
+                                            border: '2px solid #007BFF',
+                                            backgroundColor: 'green',
+                                            width: '200px',
                                             height: '50px',
                                             fontWeight: 'bold'
 
@@ -349,11 +330,11 @@ const ChitietSanPhamKhiMuaHang = ({ book_id, onEventClick }) => {
                         <div style={{
                             marginLeft: '20px',
                             marginTop: '10px',
-                            color: '#28a745', // Green color
-                            fontFamily: 'Arial, sans-serif', // Font family for cleaner appearance
-                            fontWeight: 'bold', // Bold for emphasis
-                            fontSize: '24px', // Increase font size for better visibility
-                            letterSpacing: '1px', // Adds spacing between letters for a modern look
+                            color: '#28a745',
+                            fontFamily: 'Arial, sans-serif',
+                            fontWeight: 'bold',
+                            fontSize: '24px',
+                            letterSpacing: '1px',
                         }}>
                             Giới thiệu sách
                         </div>
@@ -418,18 +399,16 @@ const ChitietSanPhamKhiMuaHang = ({ book_id, onEventClick }) => {
                             style={{
                                 marginLeft: '20px',
                                 marginTop: '0px',
-                                color: '#28a745', // Green color
-                                fontFamily: 'Arial, sans-serif', // Font family for cleaner appearance
-                                fontWeight: 'bold', // Bold for emphasis
-                                fontSize: '24px', // Increase font size for better visibility
-                                letterSpacing: '1px', // Adds spacing between letters for a modern look
+                                color: '#28a745',
+                                fontFamily: 'Arial, sans-serif', 
+                                fontWeight: 'bold',
+                                fontSize: '24px', 
+                                letterSpacing: '1px',
                             }}
                         >
                             Có thể bạn cũng thích
                         </div>
-                        <div>
-
-                        </div>
+                     
                     </div>
                 </Col>
 

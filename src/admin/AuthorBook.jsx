@@ -140,6 +140,11 @@ function AuthorBook() {
             render: (birth_date) => birth_date ? moment(birth_date).format('YYYY-MM-DD') : 'N/A',
         },
         {
+            title:'Quốc tịch',
+            dataIndex:'nationality',
+            key:'nationality'
+        },
+        {
             title: 'Ảnh Đại Diện',
             dataIndex: 'avatar',
             key: 'avatar',

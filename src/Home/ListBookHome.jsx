@@ -130,10 +130,6 @@ function ListBookHome() {
         fetchAuthors();
     }, []);
 
-    useEffect(() => {
-        fetchAuthors();
-    }, []);
-
     const handleMenuClick = (e) => {
         const selectedAuthor = authors.find(author => author.id === parseInt(e.key, 10));
         if (selectedAuthor) {

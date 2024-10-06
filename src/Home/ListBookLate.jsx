@@ -5,7 +5,6 @@ import CardProduct from '../Home/CardProduct';
 import styles from './Slider_card.module.css'; // Import CSS Module
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-//todo
 const ListBookLate = ({ onEventClick }) => {
     const [books, setBooks] = useState([]);
 

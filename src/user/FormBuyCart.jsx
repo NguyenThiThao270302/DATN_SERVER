@@ -5,7 +5,6 @@ import ProductCard from './ProductCard';
 import { RiSecurePaymentLine } from 'react-icons/ri';
 import { TiArrowBack } from 'react-icons/ti';
 
-//todo xin
 function FormBuyCart() {
     const [listCartJson, setListCartJson] = useState([]);
     const [loading, setLoading] = useState(true);

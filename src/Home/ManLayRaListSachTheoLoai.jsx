@@ -2,18 +2,20 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import styleCart from './list_book_home.module.css';
 import CardProduct from "./CardProduct";
-import { Button, Input, Space } from "antd";
+import { Button, Input, Space, Pagination } from "antd";
 import { TiArrowBack } from "react-icons/ti";
 
 function ManLayRaListSachTheoLoai({ checkLenListBook }) {
     const [books, setBooks] = useState([]);
     const [filteredBooks, setFilteredBooks] = useState([]);
-    const [inputPriceFrom, setInputPriceFrom] = useState(null);
-    const [inputPriceTo, setInputPriceTo] = useState(null);
+    const [inputPriceFrom, setInputPriceFrom] = useState('');
+    const [inputPriceTo, setInputPriceTo] = useState('');
     const [priceFrom, setPriceFrom] = useState(null);
     const [priceTo, setPriceTo] = useState(null);
     const [sortBy, setSortBy] = useState(null);
     const [nameTypeBook, setNameTypeBook] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 8; // Set fixed page size to 8
 
     const fetchListBookByTypeBook = async () => {
         try {
@@ -23,8 +25,8 @@ function ManLayRaListSachTheoLoai({ checkLenListBook }) {
             const data = response.data;
 
             if (data.code === 0) {
-                setBooks(data.body.book_detail_list || []); // Ensure array is not null
-                setFilteredBooks(data.body.book_detail_list || []); // Ensure array is not null
+                setBooks(data.body.book_detail_list || []);
+                setFilteredBooks(data.body.book_detail_list || []);
             } else {
                 console.error("Error fetching books:", data.message);
             }
@@ -37,7 +39,7 @@ function ManLayRaListSachTheoLoai({ checkLenListBook }) {
         const timeoutId = setTimeout(() => {
             const typeBookFromLocalStorage = localStorage.getItem('typebook');
             setNameTypeBook(typeBookFromLocalStorage);
-        }, 100); // Delay 0.1s
+        }, 100);
 
         return () => clearTimeout(timeoutId);
     }, []);
@@ -48,7 +50,6 @@ function ManLayRaListSachTheoLoai({ checkLenListBook }) {
         }
     }, [nameTypeBook]);
 
-    // Call the parent function with the length of the filtered books
     useEffect(() => {
         checkLenListBook && checkLenListBook(filteredBooks.length);
     }, [filteredBooks, checkLenListBook]);
@@ -63,6 +64,7 @@ function ManLayRaListSachTheoLoai({ checkLenListBook }) {
         }
 
         setFilteredBooks(updatedBooks);
+        setCurrentPage(1);
     };
 
     const applySorting = (booksToSort) => {
@@ -86,19 +88,20 @@ function ManLayRaListSachTheoLoai({ checkLenListBook }) {
             const sortedBooks = applySorting(filteredBooks);
             setFilteredBooks(sortedBooks);
         }
+        setCurrentPage(1);
     };
 
     const handlePriceFromChange = (e) => {
-        setInputPriceFrom(Number(e.target.value));
+        setInputPriceFrom(e.target.value);
     };
 
     const handlePriceToChange = (e) => {
-        setInputPriceTo(Number(e.target.value));
+        setInputPriceTo(e.target.value);
     };
 
     const handleSearchClick = () => {
-        setPriceFrom(inputPriceFrom);
-        setPriceTo(inputPriceTo);
+        setPriceFrom(inputPriceFrom ? Number(inputPriceFrom) : null);
+        setPriceTo(inputPriceTo ? Number(inputPriceTo) : null);
         applyFilters();
     };
 
@@ -106,17 +109,28 @@ function ManLayRaListSachTheoLoai({ checkLenListBook }) {
         setFilteredBooks(applySorting(filteredBooks));
     }, [sortBy]);
 
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
     if (!filteredBooks || filteredBooks.length === 0) {
-        return <div style={{ marginTop: '50px' }}>
-            <div>
-                <TiArrowBack
-                    style={{ fontSize: '25px', cursor: 'pointer' }} onClick={() => { window.location.reload() }} />
+        return (
+            <div style={{ marginTop: '50px' }}>
+                <div>
+                    <TiArrowBack
+                        style={{ fontSize: '25px', cursor: 'pointer' }}
+                        onClick={() => { window.location.reload() }}
+                    />
+                </div>
+                <div>Chưa có sách nào</div>
             </div>
-            <div>
-                Chưa có sách nào
-            </div>
-        </div>;
+        );
     }
+
+    const paginatedBooks = filteredBooks.slice(
+        (currentPage - 1) * pageSize,
+        currentPage * pageSize
+    );
 
     return (
         <div>
@@ -125,14 +139,14 @@ function ManLayRaListSachTheoLoai({ checkLenListBook }) {
                     <Button onClick={() => handleSort('desc')} style={{ height: '42px' }}>Giá từ cao đến thấp</Button>
                     <Button onClick={() => handleSort('asc')} style={{ height: '42px' }}>Giá từ thấp đến cao</Button>
                     <Button onClick={() => handleSort(null)} style={{ height: '42px' }}>Mặc định</Button>
-                    <Input placeholder="Giá từ" onChange={handlePriceFromChange} />
-                    <Input placeholder="Đến khoảng" onChange={handlePriceToChange} />
+                    <Input placeholder="Giá từ" onChange={handlePriceFromChange} value={inputPriceFrom} />
+                    <Input placeholder="Đến khoảng" onChange={handlePriceToChange} value={inputPriceTo} />
                     <Button style={{ height: '42px' }} onClick={handleSearchClick}>Tìm kiếm</Button>
                 </Space>
             </div>
 
             <div className={styleCart['books-container']}>
-                {filteredBooks.map((item) => (
+                {paginatedBooks.map((item) => (
                     <div key={item.book.id} className={styleCart['book-card']}>
                         <CardProduct
                             bookId={item.book.id}
@@ -146,6 +160,16 @@ function ManLayRaListSachTheoLoai({ checkLenListBook }) {
                         />
                     </div>
                 ))}
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px', marginRight: '20px' }}>
+                <Pagination
+                    current={currentPage}
+                    total={filteredBooks.length}
+                    pageSize={pageSize}
+                    onChange={handlePageChange}
+                    
+                />
             </div>
         </div>
     );

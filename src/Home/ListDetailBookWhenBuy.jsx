@@ -26,7 +26,6 @@ function ListDetailBookWhenBuy({ nameTypeBook }) {
     const [books, setBooks] = useState([]); // Initialize as an empty array
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [likedBooks, setLikedBooks] = useState({});
     const [selectedBookId, setSelectedBookId] = useState(null);  // Add state to manage selected book ID
     const [isNextBuy, setIsNextBuy] = useState(false);
     const [authors, setAuthors] = useState([]);
@@ -34,12 +33,10 @@ function ListDetailBookWhenBuy({ nameTypeBook }) {
     const [selectedAuthor, setSelectedAuthor] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [username, setUsername] = useState(null);
-    const [orderDesc, setOrderDesc] = useState('');
-    const [orderAsc, setOrderAsc] = useState('');
+
     const [isDrawerVisibleCart, setIsDrawerVisibleCart] = useState(false);
     const [isNextProFile, setIsNextProFile] = useState(false);
-    const [minPrice, setMinPrice] = useState('');
-    const [maxPrice, setMaxPrice] = useState('');
+
     const [hideBookmark, setHideBookmark] = useState(false);
     const [isNextAuthorBook, setIsNextAuthorBook] = useState(false);
     const [nameAuthorBook, setNameAuthorBook] = useState(null);
@@ -47,9 +44,7 @@ function ListDetailBookWhenBuy({ nameTypeBook }) {
     const [isNextFindBook, setIsNextFindBook] = useState(false);
     const [isNextCart, setIsNextCart] = useState(false);
 
-    // Handle item click event from ListAuthorBookButton
     const handleItemClick = () => {
-        // Perform additional actions if needed
         setIsNextAuthorBook(true);
     };
 
@@ -67,7 +62,6 @@ function ListDetailBookWhenBuy({ nameTypeBook }) {
 
     const openDrawerCart = () => {
         setIsDrawerVisibleCart(true);
-        // Optional: Reload the cart data when the drawer opens
         if (cartRef.current) {
             cartRef.current.reloadCart();
         }
@@ -77,22 +71,12 @@ function ListDetailBookWhenBuy({ nameTypeBook }) {
         setIsDrawerVisibleCart(false);
     };
 
-    // Function to fetch books data
     const fetchBooks = async () => {
         setLoading(true);
         setError(null);
         try {
-            // Construct query params based on the active sort order
             const params = new URLSearchParams();
             params.append('name', localStorage.getItem('typebook'));
-            if (orderDesc) {
-                params.append('desc', orderDesc);
-            }
-            if (orderAsc) {
-                params.append('asc', orderAsc);
-            }
-            if (minPrice) params.append('start', minPrice);
-            if (maxPrice) params.append('end', maxPrice);
 
             const response = await axios.get(`http://127.0.0.1:8080/manager/book/list/type_book?${params.toString()}`);
             if (response.data.code === 0) {
@@ -115,13 +99,7 @@ function ListDetailBookWhenBuy({ nameTypeBook }) {
             setUsername(storedUsername);
         }
     }, []);
-    // Load liked books from cookies
-    const loadLikedBooks = () => {
-        const liked = Cookies.get('likedBooks');
-        if (liked) {
-            setLikedBooks(JSON.parse(liked));
-        }
-    };
+
     const handleLogoutClick = () => {
         // Clear the username from local storage
         localStorage.removeItem('username');
@@ -133,29 +111,14 @@ function ListDetailBookWhenBuy({ nameTypeBook }) {
     const handleNextProFile = () => {
         setIsNextProFile(true);
     };
-    // Handle the author name change event from ListAuthorBookButton
     const handleAuthorNameChange = (name) => {
         setNameAuthorBook(name);
         setIsNextAuthorBook(true); // Set to true when an author name is selected
     };
 
-    // Toggle like status for a book
-    const toggleLike = (bookId) => {
-        setLikedBooks((prevLikedBooks) => {
-            const updatedLikedBooks = {
-                ...prevLikedBooks,
-                [bookId]: !prevLikedBooks[bookId],
-            };
-            // Save updated liked books to cookies
-            Cookies.set('likedBooks', JSON.stringify(updatedLikedBooks), { expires: 7 });
-            return updatedLikedBooks;
-        });
-    };
 
-    // Fetch books and load liked books when the component mounts or nameTypeBook changes
     useEffect(() => {
         fetchBooks();
-        loadLikedBooks();
     }, [nameTypeBook]);
 
 
@@ -166,7 +129,7 @@ function ListDetailBookWhenBuy({ nameTypeBook }) {
         setLoading(true);
         try {
             const response = await axios.get('http://127.0.0.1:8080/manager/type_book/list');
-            console.log('Response data:', response.data); // Debugging
+            console.log('Response data:', response.data);
             if (response.data.code === 0) {
                 setAuthors(response.data.body);
             } else {
@@ -347,7 +310,7 @@ function ListDetailBookWhenBuy({ nameTypeBook }) {
                 <div className={styleCart['col-books']}>
                     <div>
                         <div className={styleCart['books-container']}>
-                            {books.map((item) => (
+                            {books.slice(0, 4).map((item) => ( // Giới hạn chỉ lấy 4 item
                                 <div key={item.book.id} className={styleCart['book-card']}>
                                     <CardProduct
                                         bookId={item.book.id}
@@ -364,6 +327,7 @@ function ListDetailBookWhenBuy({ nameTypeBook }) {
                     </div>
                 </div>
             )}
+
 
 
 

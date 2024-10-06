@@ -15,29 +15,6 @@ const optionsStatusForUpdateOrder = [
     { label: 'Đơn hàng đã hủy', value: 25 },
 ];
 
-// Dữ liệu giả lập
-
-
-const initData = [
-    {
-        order_id: 1832495,
-        user_name: "Nguyễn Văn A",
-        create_time: "2024-09-01T12:34:56Z",
-        amount: 1500000, // Tính bằng đồng (VND)
-        status: 11, // Đang chờ xác nhận
-        address: {
-            district: "Quận 1",
-            commune: "Phường Bến Nghé",
-            detailed: "123 Lê Lợi",
-        },
-        items: [
-            { name: "Sách A", quantity: 2, price: 500000 },
-            { name: "Sách B", quantity: 1, price: 500000 },
-        ],
-    },
-   
-];
-
 const ListOrder = () => {
     const [data, setData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
@@ -58,27 +35,24 @@ const ListOrder = () => {
                     create_time: new Date(order.create_time).toISOString(),
                     status: order.status
                 }));
-                const combinedData = [...apiData, ...initData];
-                setData(combinedData);
-                setFilteredData(combinedData);
+                setData(apiData);
+                setFilteredData(apiData);
             } else {
                 throw new Error('Failed to fetch data from API');
             }
         } catch (err) {
             console.error('Error fetching data:', err);
-            setError('Failed to fetch data. Using initial data only.');
-            setData(initData);
-            setFilteredData(initData);
+            setError('Failed to fetch data from the API.');
+            setData([]);
+            setFilteredData([]);
         } finally {
             setLoading(false);
         }
     };
 
-
     useEffect(() => {
         fetchOrders();
     }, []);
-
 
     const updateStatusOrderById = (orderId, status) => {
         Modal.confirm({
@@ -110,7 +84,6 @@ const ListOrder = () => {
             },
         });
     };
-    
 
     const handleSearch = (value) => {
         const lowercasedValue = value.toLowerCase();
@@ -191,7 +164,6 @@ const ListOrder = () => {
                 }
             },
         },
-
         {
             title: 'Cập nhật trạng thái',
             key: 'updateOrder',
@@ -219,7 +191,6 @@ const ListOrder = () => {
                 </>
             ),
         },
-
         {
             title: '',
             key: 'action',
